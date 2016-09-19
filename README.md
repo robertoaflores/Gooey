@@ -12,8 +12,7 @@ Gooey
 <hr>
 <strong>Notes for developers:</strong>
 <ul>
-<li>This repository is structured as an Eclipse project.<br/>
+<li>This repository is structured as a Gradle project in Eclipse.<br/>
 <li>API is not stable. Expect changes while development is underway.<br/>
-<li>No tutorials exist at this point. The "junit" folder has examples you can use as guidance.
 </ul>
 <hr>
