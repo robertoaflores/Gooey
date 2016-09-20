@@ -31,6 +31,9 @@ public abstract class GooeyDisplayable <T> {
 	private final String noWindowMessage;
 	
 	protected GooeyDisplayable(String noWindowMessage) {
+		if (noWindowMessage == null) {
+			throw new IllegalArgumentException( "parameter cannot be null" );
+		}
 		this.noWindowMessage = noWindowMessage;
 	}
 
@@ -43,9 +46,6 @@ public abstract class GooeyDisplayable <T> {
 	 * @throws AssertionError if no window is displayed.
 	 */
 	public final synchronized void capture() {
-		if (noWindowMessage == null) {
-			throw new IllegalArgumentException( "parameter cannot be null" );
-		}
 		// enables capture criteria and begins listening
 		setEnableCapture( true );
 
@@ -69,11 +69,11 @@ public abstract class GooeyDisplayable <T> {
 				}
 			} while (!capture.isDone());
 
-			T capturedWindow = capture.get();
+			T captured = capture.get();
 			try {
-				test ( capturedWindow );
+				test( captured );
 			} finally {
-				close( capturedWindow );
+				close( captured );
 			}
 		} catch (ExecutionException e) {
 			Throwable t = e.getCause();

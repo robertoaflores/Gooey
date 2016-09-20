@@ -35,11 +35,25 @@ public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T>
 
 	@Override
 	protected void close(T window) {
+		/* HACK
+		   For reasons to be discovered, swing threads are stopped while this thread is running. This inhibits any changes in the state of the 
+		   GUI program when manipulating its components in test(), e.g., updating labels with setText, processing JOptionPane dialog results 
+		   (e.g., to close a parent window).
+		   The sleep() call below allows room for swing threads to execute and carry on these changes.
+		   100ms is a healthy compromise (guess): in this computer +/-35ms was the minimum for other threads to carry on. 
+		*/
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		//
 		window.dispose();
 	}
 
 	@Override
 	protected T getTarget() {
-		return listener.getTarget();
+		return listener.getTarget(); 
+
 	}
 }

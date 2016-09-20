@@ -318,7 +318,17 @@ public class Gooey {
 	 * @return list of components found.
 	 */
 	public static <T extends Component> List<T> getComponents(Container container, Class<T> type) {
-		return getComponents( container, type, c->true, retrieveComponents );
+		return getComponents( container, type, c->true );
+	}
+	/**
+	 * Returns a list with all components of a given class found in a container that match the given criteria.
+	 * @param <T> class type sub-classing from Component. 
+	 * @param container container to evaluate.
+	 * @param type class of components sought.
+	 * @return list of components found.
+	 */
+	public static <T extends Component> List<T> getComponents(Container container, Class<T> type, Predicate<T> criteria) {
+		return getComponents( container, type, criteria, retrieveComponents );
 	}
 	/**
 	 * (Funnel method for the public getComponents method) Returns a list with all components in a container that match the given class type and criteria.
