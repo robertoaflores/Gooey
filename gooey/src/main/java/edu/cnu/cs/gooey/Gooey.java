@@ -17,9 +17,9 @@ import java.awt.Window;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -109,8 +109,8 @@ public class Gooey {
 	 * @throws AssertionError if no tab with the given string is found.
 	 */
 	public static Component getTab(JTabbedPane tabPane, String string, Match flag) {
-		Callable<String>    notFound = ()-> String.format( "No tab \"%s\" found (search: %s)", string, flag );
-    	Optional<Component> result   = IntStream
+		Supplier<String>    notFound = ()-> String.format( "Tab \"%s\" not found (searched by: %s)", string, flag );
+		Optional<Component> result   = IntStream
     			.range   ( 0, tabPane.getTabCount() )
     			.filter  ( i->string.equals(flag == Match.BY_TEXT ? tabPane.getTitleAt(i) 
     					                                          : tabPane.getComponentAt(i).getName() ))
@@ -140,7 +140,7 @@ public class Gooey {
 	 * @throws AssertionError if no label with the given string is found.
 	 */
 	public static JLabel getLabel(Container container, final String string, final Match flag) {
-		Callable<String>     notFound = ()-> String.format( "No label \"%s\" found (search: %s)", string, flag );
+		Supplier<String>     notFound = ()-> String.format( "Label \"%s\" not found (searched by: %s)", string, flag );
 		return getComponent( notFound, container, JLabel.class, l -> string.equals(flag == Match.BY_TEXT ? l.getText() : l.getName()), retrieveComponents );
 	}
 	/**
@@ -164,7 +164,7 @@ public class Gooey {
 	 * @throws AssertionError if no button with the given string is found.
 	 */
 	public static JButton getButton(Container container, final String string, final Match flag) {
-		Callable<String>     notFound = ()-> String.format( "No button \"%s\" found (search: %s)", string, flag );
+		Supplier<String>     notFound = ()-> String.format( "Button \"%s\" not found (searched by: %s)", string, flag );
 		return getComponent( notFound, container, JButton.class, b -> string.equals(flag == Match.BY_TEXT ? b.getText() : b.getName()), retrieveComponents );
 	}
 	/**
@@ -177,7 +177,7 @@ public class Gooey {
 	public static JMenuBar getMenuBar(JFrame frame) {
 		JMenuBar menubar = frame.getJMenuBar();
 		if (menubar == null) {
-			throw new AssertionError( "No menubar found" );
+			throw new AssertionError( "Menubar not found" );
 		}
 		return menubar;
 	}
@@ -242,7 +242,7 @@ public class Gooey {
 	 * @throws AssertionError if no menu with the given text is found.
 	 */
 	private static <T extends JMenuItem> T getMenu(Container menu, final Class<T> type, final String string, Match flag) {
-		Callable<String>     notFound = ()-> String.format( "No menu \"%s\" found (search: %s)", string, flag );
+		Supplier<String>     notFound = ()-> String.format( "Menu \"%s\" not found (searched by: %s)", string, flag );
 		return getComponent( notFound, menu, type, m -> string.equals(flag == Match.BY_TEXT ? m.getText() : m.getName()), retrieveMenus );
 	}
 	
@@ -277,7 +277,7 @@ public class Gooey {
 	 * @throws AssertionError if no component of the given class is found.
 	 */
 	public static <T extends Component> T getComponent(Container container, Class<T> type) {
-		Callable<String>     notFound = ()-> String.format( "No \"%s\" component found", type.getName() );
+		Supplier<String>     notFound = ()-> String.format( "Component \"%s\" not found", type.getName() );
 		return getComponent( notFound, container, type, t->true, retrieveComponents );
 	}
 	/**
@@ -290,7 +290,7 @@ public class Gooey {
 	 * @throws AssertionError if no component with the given class and name is found.
 	 */
 	public static <T extends Component> T getComponent(Container container, final Class<T> type, final String name) {
-		Callable<String>     notFound = ()-> String.format( "No \"%s\" component \"%s\" found (search: %s)", type.getName(), name, Match.BY_NAME );
+		Supplier<String>     notFound = ()-> String.format( "No \"%s\" component \"%s\" found (searched by: %s)", type.getName(), name, Match.BY_NAME );
 		return getComponent( notFound, container, type, t->name.equals( t.getName() ), retrieveComponents );
 	}
 	
@@ -305,10 +305,10 @@ public class Gooey {
 	 * @return component found.
 	 * @throws AssertionError if no component with the given class and criteria is found.
 	 */
-	private static <T extends Component> T getComponent(Callable<String> notFound, Container container, Class<T> type, Predicate<T> criteria, Function<Component,Tree> retrieveFrom) {
+	private static <T extends Component> T getComponent(Supplier<String> notFound, Container container, Class<T> type, Predicate<T> criteria, Function<Component,Tree> retrieveFrom) {
 		Optional<T> result = getComponentStream( container, type, criteria, retrieveFrom ).findAny();
 		if (result.isPresent()) return result.get();
-		else                    throw new AssertionError( notFound );
+		else                    throw new AssertionError( notFound.get() );
 	}
 	/**
 	 * Returns a list with all components of a given class found in a container.
