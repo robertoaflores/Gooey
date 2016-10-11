@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 
 public abstract class GooeyFrame extends GooeyWindow<JFrame> {
 	public GooeyFrame() {
-		this( "No JFrame detected" );
+		this( "JFrame not detected" );
 	}
 	public GooeyFrame(String noWindowMessage) {
 		super( JFrame.class, noWindowMessage );

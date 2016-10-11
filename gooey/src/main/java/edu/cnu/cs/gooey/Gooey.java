@@ -60,8 +60,8 @@ public class Gooey {
 	 * @since 1.8
 	 */
 	public enum Match {
-		BY_NAME( "by name" ),
-		BY_TEXT( "by text" );
+		BY_NAME ( "by name" ),
+		BY_LABEL( "by label" );
 		
 		private String string;
 		
@@ -96,7 +96,7 @@ public class Gooey {
 	 * @throws AssertionError if no tab with the given title is found.
 	 */
 	public static Component getTab(JTabbedPane tabPane, String title) {
-		return getTab( tabPane, title, Match.BY_TEXT );
+		return getTab( tabPane, title, Match.BY_LABEL );
 	}
 	/**
 	 * Given a tab pane it returns the component associated with the given string.
@@ -109,10 +109,10 @@ public class Gooey {
 	 * @throws AssertionError if no tab with the given string is found.
 	 */
 	public static Component getTab(JTabbedPane tabPane, String string, Match flag) {
-		Supplier<String>    notFound = ()-> String.format( "Tab \"%s\" not found (searched by: %s)", string, flag );
+		Supplier<String>    notFound = ()-> String.format( "Tab \"%s\" not found (searched %s)", string, flag );
 		Optional<Component> result   = IntStream
     			.range   ( 0, tabPane.getTabCount() )
-    			.filter  ( i->string.equals(flag == Match.BY_TEXT ? tabPane.getTitleAt(i) 
+    			.filter  ( i->string.equals(flag == Match.BY_LABEL ? tabPane.getTitleAt(i) 
     					                                          : tabPane.getComponentAt(i).getName() ))
     			.mapToObj( i->tabPane.getComponentAt( i ))
     			.findAny ();
@@ -127,7 +127,7 @@ public class Gooey {
 	 * @throws AssertionError if no label with the given text is found.
 	 */
 	public static JLabel getLabel(Container container, String text) {
-		return getLabel( container, text, Match.BY_TEXT );
+		return getLabel( container, text, Match.BY_LABEL );
 	}
 	/**
 	 * Given a container it returns the label associated with the given string.
@@ -140,8 +140,8 @@ public class Gooey {
 	 * @throws AssertionError if no label with the given string is found.
 	 */
 	public static JLabel getLabel(Container container, final String string, final Match flag) {
-		Supplier<String>     notFound = ()-> String.format( "Label \"%s\" not found (searched by: %s)", string, flag );
-		return getComponent( notFound, container, JLabel.class, l -> string.equals(flag == Match.BY_TEXT ? l.getText() : l.getName()), retrieveComponents );
+		Supplier<String>     notFound = ()-> String.format( "Label \"%s\" not found (searched %s)", string, flag );
+		return getComponent( notFound, container, JLabel.class, l -> string.equals(flag == Match.BY_LABEL ? l.getText() : l.getName()), retrieveComponents );
 	}
 	/**
 	 * Given a container it returns the button displaying the given text.
@@ -151,7 +151,7 @@ public class Gooey {
 	 * @throws AssertionError if no button with the given text is found.
 	 */
 	public static JButton getButton(Container container, String text) {
-		return getButton( container, text, Match.BY_TEXT );
+		return getButton( container, text, Match.BY_LABEL );
 	}
 	/**
 	 * Given a container it returns the button associated with the given string.
@@ -164,8 +164,8 @@ public class Gooey {
 	 * @throws AssertionError if no button with the given string is found.
 	 */
 	public static JButton getButton(Container container, final String string, final Match flag) {
-		Supplier<String>     notFound = ()-> String.format( "Button \"%s\" not found (searched by: %s)", string, flag );
-		return getComponent( notFound, container, JButton.class, b -> string.equals(flag == Match.BY_TEXT ? b.getText() : b.getName()), retrieveComponents );
+		Supplier<String>     notFound = ()-> String.format( "Button \"%s\" not found (searched %s)", string, flag );
+		return getComponent( notFound, container, JButton.class, b -> string.equals(flag == Match.BY_LABEL ? b.getText() : b.getName()), retrieveComponents );
 	}
 	/**
 	 * Returns the menu bar associated with a frame.
@@ -189,7 +189,7 @@ public class Gooey {
 	 * @throws AssertionError if no menu with the given text is found.
 	 */
 	public static JMenu getMenu(JMenuBar menubar, String text) {
-		return getMenu( menubar, text, Match.BY_TEXT );
+		return getMenu( menubar, text, Match.BY_LABEL );
 	}
 	/**
 	 * Given a menu bar it returns the menu associated with the given string.
@@ -214,7 +214,7 @@ public class Gooey {
 	 * @throws AssertionError if no sub-menu with the given text is found.
 	 */
 	public static <T extends JMenuItem> T getMenu(JMenu menu, String text) {
-		return getMenu( menu, text, Match.BY_TEXT );
+		return getMenu( menu, text, Match.BY_LABEL );
 	}
 	/**
 	 * Given a menu it returns the sub-menu (i.e., another menu or a menu item) associated with the given string.
@@ -242,8 +242,8 @@ public class Gooey {
 	 * @throws AssertionError if no menu with the given text is found.
 	 */
 	private static <T extends JMenuItem> T getMenu(Container menu, final Class<T> type, final String string, Match flag) {
-		Supplier<String>     notFound = ()-> String.format( "Menu \"%s\" not found (searched by: %s)", string, flag );
-		return getComponent( notFound, menu, type, m -> string.equals(flag == Match.BY_TEXT ? m.getText() : m.getName()), retrieveMenus );
+		Supplier<String>     notFound = ()-> String.format( "Menu \"%s\" not found (searched %s)", string, flag );
+		return getComponent( notFound, menu, type, m -> string.equals(flag == Match.BY_LABEL ? m.getText() : m.getName()), retrieveMenus );
 	}
 	
 	/**
@@ -290,7 +290,7 @@ public class Gooey {
 	 * @throws AssertionError if no component with the given class and name is found.
 	 */
 	public static <T extends Component> T getComponent(Container container, final Class<T> type, final String name) {
-		Supplier<String>     notFound = ()-> String.format( "No \"%s\" component \"%s\" found (searched by: %s)", type.getName(), name, Match.BY_NAME );
+		Supplier<String>     notFound = ()-> String.format( "No \"%s\" component \"%s\" found (searched %s)", type.getName(), name, Match.BY_NAME );
 		return getComponent( notFound, container, type, t->name.equals( t.getName() ), retrieveComponents );
 	}
 	

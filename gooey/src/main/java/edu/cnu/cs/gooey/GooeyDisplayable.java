@@ -19,11 +19,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public abstract class GooeyDisplayable <T> {
-	private static final int TIMEOUT = 5000; // in milliseconds
-	
+	private static final int TIMEOUT  = 5000; // in milliseconds
+
 	public    abstract void invoke();
-	public    abstract void test (T capturedWindow);
-	protected abstract void close(T capturedWindow);
+	public    abstract void test (T window);
+	protected abstract void close(T window);
 	
 	protected abstract void setEnableCapture(boolean on);
 	protected abstract T    getTarget();
@@ -46,9 +46,11 @@ public abstract class GooeyDisplayable <T> {
 	 * @throws AssertionError if no window is displayed.
 	 */
 	public final synchronized void capture() {
+//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"1.capture  [begin]");
 		// enables capture criteria and begins listening
 		setEnableCapture( true );
 
+//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"2.execute [begin]");
 		// runs methods 
 		// "invoke", which displays a window
 		// "getTarget", which returns captured window
@@ -57,9 +59,13 @@ public abstract class GooeyDisplayable <T> {
 		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
 		Future<T>            capture    = completion.submit( ()->  getTarget() );
 		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( TIMEOUT ); return null; } );
+//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"3.execute [end]");
 		try {
+			executor.shutdown();
+//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"4.invoke  [begin]");
 			do {
 				Future<?> done = completion.take();
+//				System.out.printf("%s,%d,%s,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"a.take",done==invoke?"invoke":done==timeout?"timeout":done==capture?"capture":"what?");
 				if (invoke == done) {
 					invoke.get(); // if "invoke" threw an exception then "get" throws an ExecutionException (caught below);  
                                   // otherwise "invoke" terminated normally and we ignore the value it returned.
@@ -68,10 +74,13 @@ public abstract class GooeyDisplayable <T> {
 					throw new AssertionError( noWindowMessage );
 				}
 			} while (!capture.isDone());
+//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"5.invoke  [end]");
 
 			T captured = capture.get();
 			try {
+//				System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"6.test    [begin]");
 				test( captured );
+//				System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"7.test    [end]");
 			} finally {
 				close( captured );
 			}
@@ -85,6 +94,7 @@ public abstract class GooeyDisplayable <T> {
 		} finally {
 			// disables capture criteria and stops listening
 			setEnableCapture( false );
+//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"8.capture [end]");
 		}
 	}
 }

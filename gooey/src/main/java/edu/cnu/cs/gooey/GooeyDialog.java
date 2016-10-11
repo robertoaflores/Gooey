@@ -16,7 +16,7 @@ import javax.swing.JDialog;
 
 public abstract class GooeyDialog extends GooeyWindow<JDialog> {
 	public GooeyDialog() {
-		this( "No JDialog detected" );
+		this( "JDialog not detected" );
 	}
 	public GooeyDialog(String noWindowMessage) {
 		super( JDialog.class, noWindowMessage );
