@@ -40,15 +40,18 @@ public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T>
 		   GUI program when manipulating its components in test(), e.g., updating labels with setText, processing JOptionPane dialog results 
 		   (e.g., to close a parent window).
 		   The sleep() call below allows room for swing threads to execute and carry on these changes.
-		   100ms is a healthy compromise (guess): in this computer +/-35ms was the minimum for other threads to carry on. 
+		   200ms is a healthy compromise (guess): in this computer +/-35ms was the minimum for other threads to carry on. 
 		*/
 		try {
-			Thread.sleep(100);
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		//
-		window.dispose();
+		if (window.isVisible()) {
+			window.setVisible(false);
+		}
+//		window.dispose();
 	}
 
 	@Override
