@@ -11,6 +11,7 @@ package edu.cnu.cs.gooey;
  * <p>Company: JoSE Group, Christopher Newport University</p>
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -43,6 +44,7 @@ public abstract class GooeyDisplayable <T> {
 	 * the method testing this window. It calls abstract methods <code>invoke</code> 
 	 * (calls the code to display a window) and <code>test</code> (calls the code to test the window). 
 	 * If no window is detected within a waiting period the method throws an AssertionError.  
+	 * @throws InvocationTargetException 
 	 * @throws AssertionError if no window is displayed.
 	 */
 	public final synchronized void capture() {
@@ -78,9 +80,7 @@ public abstract class GooeyDisplayable <T> {
 
 			T captured = capture.get();
 			try {
-//				System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"6.test    [begin]");
 				test( captured );
-//				System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"7.test    [end]");
 			} finally {
 				close( captured );
 			}
