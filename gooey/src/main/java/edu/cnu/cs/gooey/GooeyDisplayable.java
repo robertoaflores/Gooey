@@ -70,7 +70,6 @@ public abstract class GooeyDisplayable <T> {
 				SwingUtilities.invokeAndWait(()->invoke());
 				return null;
 			}
-			
 		}, null );
 //		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"3.execute [end]");
 		try {
