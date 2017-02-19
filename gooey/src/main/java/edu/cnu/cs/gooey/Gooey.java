@@ -49,7 +49,7 @@ public class Gooey {
 	/**
 	 * Current build version.
 	 */
-	private static final double BUILD_VERSION = 1.8;
+	private static final double BUILD_VERSION = 1.801;
 
 	/**
 	 * Enumerated type indicating whether a component is sought by name or displayed text.
