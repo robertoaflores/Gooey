@@ -19,9 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-
 public abstract class GooeyDisplayable <T> {
 	private static final int TIMEOUT  = 5000; // in milliseconds
 
@@ -50,7 +47,7 @@ public abstract class GooeyDisplayable <T> {
 	 * @throws InvocationTargetException 
 	 * @throws AssertionError if no window is displayed.
 	 */
-	public final synchronized void capture() {
+	public final void capture() {
 //		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"1.capture  [begin]");
 		// enables capture criteria and begins listening
 		setEnableCapture( true );
@@ -61,16 +58,16 @@ public abstract class GooeyDisplayable <T> {
 		// "getTarget", which returns captured window
 		ExecutorService      executor   = Executors.newCachedThreadPool();
 		CompletionService<T> completion = new ExecutorCompletionService<>( executor );
-//		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
+		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
 		Future<T>            capture    = completion.submit( ()->  getTarget() );
 		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( TIMEOUT ); return null; } );
-		Future<?>            invoke     = completion.submit( new SwingWorker<Void,Void>(){
-			@Override
-			protected Void doInBackground() throws Exception {
-				SwingUtilities.invokeAndWait(()->invoke());
-				return null;
-			}
-		}, null );
+//		Future<?>            invoke     = completion.submit( new SwingWorker<Void,Void>(){
+//			@Override
+//			protected Void doInBackground() throws Exception {
+//				SwingUtilities.invokeAndWait(()->invoke());
+//				return null;
+//			}
+//		}, null );
 //		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"3.execute [end]");
 		try {
 			executor.shutdown();
@@ -90,7 +87,7 @@ public abstract class GooeyDisplayable <T> {
 
 			T captured = capture.get();
 			try {
-				test( captured );
+				test ( captured );
 			} finally {
 				close( captured );
 			}
