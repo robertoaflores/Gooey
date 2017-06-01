@@ -12,18 +12,14 @@ package edu.cnu.cs.gooey;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public abstract class GooeyDisplayable <T> {
-	private static final int TIMEOUT  = 5000; // in milliseconds
+	private static final int TIMEOUT  = 2000; // in milliseconds
 
 	public    abstract void invoke();
 	public    abstract void test (T window);
@@ -51,6 +47,97 @@ public abstract class GooeyDisplayable <T> {
 	 * @throws AssertionError if no window is displayed.
 	 */
 	public final void capture() {
+		// enables capture criteria and begins listening
+		setEnableCapture( true );
+
+//		SwingWorker<Void,Void> invoke  = new SwingWorker<Void,Void>(){
+//			@Override
+//			protected Void doInBackground() throws Exception {
+//				SwingUtilities.invokeAndWait( ()->invoke() );
+//				return null;
+//			}
+//		};
+//		Runnable    timeout = ()->{
+//			try {
+//				Thread.sleep( TIMEOUT );
+//			} catch (InterruptedException e) {
+//			}
+//		};
+//		Supplier<T> capture = ()->getTarget();
+//		Consumer<T> test    = t->test ( t );
+//		Consumer<T> close   = t->close( t );
+
+		try {
+			CompletableFuture.runAsync(new SwingWorker<Void,Void>(){
+				@Override
+				protected Void doInBackground() throws Exception {
+					SwingUtilities.invokeAndWait( ()->invoke() );
+					return null;
+				}
+			}); 
+			CompletableFuture<Void> timeout = CompletableFuture.runAsync(()->{
+				try {
+					Thread.sleep( TIMEOUT );
+				} catch (InterruptedException e) {
+				}
+			}); 
+			CompletableFuture<T>    capture = CompletableFuture.supplyAsync(()->getTarget()); 
+			CompletableFuture.anyOf( capture, timeout ).join();
+//			System.out.printf("invoke[%-5s]+timeout[%-5s] capture[%-5s]%n", invoke.isDone(), timeout.isDone(), capture.isDone() );
+			if (capture.isDone()) {
+				AtomicReference<RuntimeException> exception = new AtomicReference<>( null );
+				capture.thenAccept(t->test(t)).exceptionally(e->{
+					Throwable cause = e.getCause();
+					if (cause instanceof RuntimeException) {
+						exception.set( (RuntimeException) cause );
+					}
+					return null;
+				}).join();
+				capture.thenAccept(t ->close(t));
+				RuntimeException hey = exception.get();  
+				if (hey != null) {
+					throw hey;
+				}
+			} else {
+				throw new AssertionError( noWindowMessage );
+			}
+		} finally {
+			setEnableCapture( false );
+		}
+/*
+		Consumer<T> test    = a->test ( a );
+		Consumer<T> close   = a->close( a );
+
+		try {
+			CompletableFuture<T>    capture = CompletableFuture.supplyAsync( ()->getTarget() ); 
+			CompletableFuture<Void> invoke  = CompletableFuture.   runAsync( ()->new SwingWorker<Void,Void>(){
+				@Override
+				protected Void doInBackground() throws Exception {
+					SwingUtilities.invokeAndWait( ()->invoke() );
+					return null;
+				}
+			}).thenRun(()->{
+				try {
+					Thread.sleep( TIMEOUT );
+				} catch (InterruptedException e) {
+				}
+			});
+//			CompletableFuture<Void> a       = CompletableFuture.runAsync(invoke).thenRun(timeout); 
+//			CompletableFuture<T>    b       = CompletableFuture.supplyAsync(capture); 
+
+			CompletableFuture.anyOf( capture, invoke ).join();
+			System.out.printf("invoke+timeout[%-5s] capture[%-5s]%n", invoke.isDone(), capture.isDone() );
+			if (capture.isDone()) {
+				invoke .join();
+				capture.thenAccept(t->test.andThen(close)).join();
+			} else {
+				throw new AssertionError( noWindowMessage );
+			}
+		} finally {
+			setEnableCapture( false );
+		}
+ */
+/*
 //		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"1.capture  [begin]");
 		// enables capture criteria and begins listening
 		setEnableCapture( true );
@@ -106,5 +193,6 @@ public abstract class GooeyDisplayable <T> {
 			setEnableCapture( false );
 //			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"8.capture [end]");
 		}
+*/
 	}
 }

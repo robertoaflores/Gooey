@@ -88,7 +88,7 @@ public class SwingEmptyJFrameTest {
 		});
 	}
 	@Test(expected=AssertionError.class)
-	public void testDoesntHaveTextFiels() {
+	public void testDoesntHaveTextFiedls() {
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {

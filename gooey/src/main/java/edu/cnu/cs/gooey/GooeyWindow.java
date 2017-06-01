@@ -17,6 +17,8 @@ import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.util.function.Predicate;
 
+import javax.swing.SwingUtilities;
+
 public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T> {
 	private final GooeySwingToolkitListener<T> listener;
 
@@ -35,28 +37,14 @@ public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T>
 
 	@Override
 	protected void close(T window) {
-		/* HACK
-		   For reasons to be discovered, swing threads are stopped while this thread is running. This inhibits any changes in the state of the 
-		   GUI program when manipulating its components in test(), e.g., updating labels with setText, processing JOptionPane dialog results 
-		   (e.g., to close a parent window).
-		   The sleep() call below allows room for swing threads to execute and carry on these changes.
-		   200ms is a healthy compromise (guess): in this computer +/-35ms was the minimum for other threads to carry on. 
-		*/
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		//
-		if (window.isVisible()) {
-			window.setVisible(false);
-		}
-//		window.dispose();
+		SwingUtilities.invokeLater(()->{
+//			System.out.println("closing...");
+			window.setVisible( false );
+		});
 	}
 
 	@Override
 	protected T getTarget() {
 		return listener.getTarget(); 
-
 	}
 }
