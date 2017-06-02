@@ -28,17 +28,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.Gooey.Match;
 import edu.cnu.cs.gooey.GooeyFrame;
 
 public class SwingTabbedPaneTest {
-	private static final String TAB_1 = "tabs.1";
-	private static final String TAB_2 = "tabs.2";
-	private static final String TAB_3 = "tabs.3";
-	private static final String TAB_4 = "tabs.4";
+	private static final String TAB_1 = "#tab.1";
+	private static final String TAB_2 = "#tab.2";
+	private static final String TAB_3 = "#tab.3";
+	private static final String TAB_4 = "#tab.4";
 
 	@SuppressWarnings("serial")
 	private static class PanelWithTabs extends JPanel {
@@ -90,6 +92,10 @@ public class SwingTabbedPaneTest {
 			frame.setVisible(true);
 		}
 	}
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();	
+
 	@Test
 	public void testHasTabs() {
 		Gooey.capture( new GooeyFrame() {
@@ -132,8 +138,11 @@ public class SwingTabbedPaneTest {
 			}
 		});
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testDoesntHaveTabByText() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage("Tab \"Tab 9\" not found (searched by label)");
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
@@ -146,8 +155,11 @@ public class SwingTabbedPaneTest {
 			}
 		});
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testDoesntHaveTabByName() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage("Tab \"my.tab\" not found (searched by name)");
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {

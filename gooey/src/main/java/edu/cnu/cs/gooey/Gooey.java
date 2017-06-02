@@ -116,8 +116,8 @@ public class Gooey {
     					                                          : tabPane.getComponentAt(i).getName() ))
     			.mapToObj( i->tabPane.getComponentAt( i ))
     			.findAny ();
-    	if (result.isPresent()) return result.get();
-    	else                    throw new AssertionError( notFound );
+    	if (result.isPresent()) return                      result.get();
+    	else                    throw new AssertionError( notFound.get() );
 	}
 	/**
 	 * Given a container it returns the label displaying the given text. 
@@ -307,7 +307,7 @@ public class Gooey {
 	 */
 	private static <T extends Component> T getComponent(Supplier<String> notFound, Container container, Class<T> type, Predicate<T> criteria, Function<Component,Tree> retrieveFrom) {
 		Optional<T> result = getComponentStream( container, type, criteria, retrieveFrom ).findAny();
-		if (result.isPresent()) return result.get();
+		if (result.isPresent()) return                      result.get();
 		else                    throw new AssertionError( notFound.get() );
 	}
 	/**

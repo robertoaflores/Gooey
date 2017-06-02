@@ -2,16 +2,24 @@
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyDialog;
 import edu.cnu.cs.gooey.GooeyFrame;
 
 public class SwingNoWindowCaptureTimeOutTest {
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();	
 	
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testNothingInvoked() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JFrame not detected" );
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
@@ -39,8 +47,11 @@ public class SwingNoWindowCaptureTimeOutTest {
 			 // frame.setVisible( true );
 		}
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testWindowNotDisplayed() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JFrame not detected" );
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
@@ -57,8 +68,11 @@ public class SwingNoWindowCaptureTimeOutTest {
 		public static void main(String[] args) {
 		}
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testNoWindowDisplayed() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JFrame not detected" );
+		
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override
@@ -70,8 +84,11 @@ public class SwingNoWindowCaptureTimeOutTest {
 				}
 			});
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testNoDialogDisplayed() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JDialog not detected" );
+		
 		Gooey.capture(
 			new GooeyDialog() {
 				@Override
@@ -85,8 +102,11 @@ public class SwingNoWindowCaptureTimeOutTest {
 	}
 
 	// A JFrame (not a JDialog) displayed 
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testFrameInsteadOfExpectedDialogDisplayed() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JDialog not detected" );
+		
 		JFrame frame = new JFrame("I'm a JFrame");
 		frame.setSize( 300, 100 );
 		try {
@@ -105,8 +125,11 @@ public class SwingNoWindowCaptureTimeOutTest {
 		}
 	}
 	// A JDialog (not a JFrame) displayed 
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testDialogInsteadOfExpectedFrameDisplayed() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JFrame not detected" );
+		
 		JDialog dialog = new JDialog(new JFrame(),"I'm a JDialog",true);
 		dialog.setSize ( 300, 200 );
 		try {

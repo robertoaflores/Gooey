@@ -85,18 +85,20 @@ public abstract class GooeyDisplayable <T> {
 			CompletableFuture.anyOf( capture, timeout ).join();
 //			System.out.printf("invoke[%-5s]+timeout[%-5s] capture[%-5s]%n", invoke.isDone(), timeout.isDone(), capture.isDone() );
 			if (capture.isDone()) {
-				AtomicReference<RuntimeException> exception = new AtomicReference<>( null );
+				AtomicReference<Throwable> thrownInTest = new AtomicReference<>( null );
 				capture.thenAccept(t->test(t)).exceptionally(e->{
-					Throwable cause = e.getCause();
-					if (cause instanceof RuntimeException) {
-						exception.set( (RuntimeException) cause );
-					}
+					thrownInTest.set( e.getCause() );
 					return null;
 				}).join();
 				capture.thenAccept(t ->close(t));
-				RuntimeException hey = exception.get();  
+				Throwable hey = thrownInTest.get();  
 				if (hey != null) {
-					throw hey;
+					if      (hey instanceof RuntimeException) throw (RuntimeException) hey;
+					else if (hey instanceof AssertionError)   throw (AssertionError)   hey;
+					else { 
+//						System.out.println("What do I do with: "+hey);
+						throw new AssertionError( hey );
+					}
 				}
 			} else {
 				throw new AssertionError( noWindowMessage );
@@ -104,95 +106,5 @@ public abstract class GooeyDisplayable <T> {
 		} finally {
 			setEnableCapture( false );
 		}
-/*
-		Consumer<T> test    = a->test ( a );
-		Consumer<T> close   = a->close( a );
-
-		try {
-			CompletableFuture<T>    capture = CompletableFuture.supplyAsync( ()->getTarget() ); 
-			CompletableFuture<Void> invoke  = CompletableFuture.   runAsync( ()->new SwingWorker<Void,Void>(){
-				@Override
-				protected Void doInBackground() throws Exception {
-					SwingUtilities.invokeAndWait( ()->invoke() );
-					return null;
-				}
-			}).thenRun(()->{
-				try {
-					Thread.sleep( TIMEOUT );
-				} catch (InterruptedException e) {
-				}
-			});
-//			CompletableFuture<Void> a       = CompletableFuture.runAsync(invoke).thenRun(timeout); 
-//			CompletableFuture<T>    b       = CompletableFuture.supplyAsync(capture); 
-
-			CompletableFuture.anyOf( capture, invoke ).join();
-			System.out.printf("invoke+timeout[%-5s] capture[%-5s]%n", invoke.isDone(), capture.isDone() );
-			if (capture.isDone()) {
-				invoke .join();
-				capture.thenAccept(t->test.andThen(close)).join();
-			} else {
-				throw new AssertionError( noWindowMessage );
-			}
-		} finally {
-			setEnableCapture( false );
-		}
- */
-/*
-//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"1.capture  [begin]");
-		// enables capture criteria and begins listening
-		setEnableCapture( true );
-
-//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"2.execute [begin]");
-		// runs methods 
-		// "invoke", which displays a window
-		// "getTarget", which returns captured window
-		ExecutorService      executor   = Executors.newCachedThreadPool();
-		CompletionService<T> completion = new ExecutorCompletionService<>( executor );
-//		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
-		Future<T>            capture    = completion.submit( ()->  getTarget() );
-		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( TIMEOUT ); return null; } );
-		Future<?>            invoke     = completion.submit( new SwingWorker<Void,Void>(){
-			@Override
-			protected Void doInBackground() throws Exception {
-				SwingUtilities.invokeAndWait(()->invoke());
-				return null;
-			}
-		}, null );
-//		System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"3.execute [end]");
-		try {
-			executor.shutdown();
-//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"4.invoke  [begin]");
-			do {
-				Future<?> done = completion.take();
-//				System.out.printf("%s,%d,%s,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"a.take",done==invoke?"invoke":done==timeout?"timeout":done==capture?"capture":"what?");
-				if (invoke == done) {
-					invoke.get(); // if "invoke" threw an exception then "get" throws an ExecutionException (caught below);  
-                                  // otherwise "invoke" terminated normally and we ignore the value it returned.
-				}
-				if (timeout == done) {
-					throw new AssertionError( noWindowMessage );
-				}
-			} while (!capture.isDone());
-//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"5.invoke  [end]");
-
-			T captured = capture.get();
-			try {
-				test ( captured );
-			} finally {
-				close( captured );
-			}
-		} catch (ExecutionException e) {
-			Throwable t = e.getCause();
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			// disables capture criteria and stops listening
-			setEnableCapture( false );
-//			System.out.printf("%s,%d,%s%n",Thread.currentThread().getName(),System.currentTimeMillis(),"8.capture [end]");
-		}
-*/
 	}
 }

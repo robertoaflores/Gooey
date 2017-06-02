@@ -149,6 +149,7 @@ public class SwingNameJFrameTest {
 			if (what == JOptionPane.YES_OPTION) {
 //				JFrame target = NameJFrame.this;
 //				System.out.printf( "%-30s: (active:%-5s) (valid:%-5s) (enabled:%-5s) (focused:%-5s) (showing:%-5s) %s %s%n", "test.dispose", target.isActive(), target.isValid(), target.isEnabled(), target.isFocused(), target.isShowing(), target.getName(), Thread.currentThread() );
+				System.out.printf( "dispose()%n" );
 				dispose();
 			}
 		}
@@ -246,7 +247,7 @@ public class SwingNameJFrameTest {
 				JMenu     program = Gooey.getMenu   ( menubar, "Program" );
 				JMenuItem exit    = Gooey.getMenu   ( program, "Exit" ); 
 
-				assertTrue  ( "JFrame should be displayed", frame.isShowing() );
+				assertTrue ( "JFrame should be displayed", frame.isShowing() );
 				Gooey.capture( new GooeyDialog() {
 					@Override
 					public void invoke() {
@@ -257,7 +258,8 @@ public class SwingNameJFrameTest {
 						Gooey.getButton( dialog, "Yes" ).doClick();
 					}
 				});
-				assertFalse ( "JFrame should be hidden",    frame.isShowing() );
+				System.out.printf( "did we close?%n" );
+				assertFalse( "JFrame should be hidden",   frame.isShowing() );
 			}
 		});
 	}

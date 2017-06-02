@@ -13,7 +13,9 @@
 import javax.swing.JFrame;
 import java.awt.Window;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyFrame;
@@ -21,8 +23,14 @@ import edu.cnu.cs.gooey.GooeyWindow;
 
 public class SwingExceptionsTest {
 
-	@Test(expected=IllegalArgumentException.class)
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();	
+
+	@Test
 	public void testCaptureGooeyWindowWithNullClass() {
+		thrown.expect( IllegalArgumentException.class );
+		thrown.expectMessage( "parameter cannot be null" );
+		
 		Gooey.capture( new GooeyWindow<Window>( null, "" ) {
 			@Override
 			public void invoke() {
@@ -33,8 +41,11 @@ public class SwingExceptionsTest {
 		});
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testCaptureGooeyWindowWithNullMessage() {
+		thrown.expect( IllegalArgumentException.class );
+		thrown.expectMessage( "parameter cannot be null" );
+		
 		Gooey.capture( new GooeyFrame( null ) {
 			@Override
 			public void invoke() {
@@ -45,35 +56,38 @@ public class SwingExceptionsTest {
 		});
 	}
 
-	// Exception test
-	@Test(expected=RuntimeException.class)
+	@Test
 	public void testInvokeThrowsException() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "JFrame not detected" );
+		
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override
 				public void invoke() {
-					throw new RuntimeException();
+					throw new RuntimeException("thrown in invoke()");
 				}
 				@Override
 				public void test(JFrame window) {
 				}
 			});
 	}
-	@Test(expected=RuntimeException.class)
+	@Test
 	public void testTestThrowsException() {
-		JFrame frame = new JFrame();
+		thrown.expect( RuntimeException.class );
+		thrown.expectMessage( "thrown in test()" );
+		
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override
 				public void invoke() {
-					frame.setVisible( true );
+					new JFrame().setVisible( true );
 				}
 				@Override
 				public void test(JFrame window) {
-					throw new RuntimeException();
+					throw new RuntimeException( "thrown in test()" );
 				}
 			});
-		frame.dispose();
 	}
 
 }

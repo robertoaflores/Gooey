@@ -10,7 +10,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.Gooey.Match;
@@ -21,6 +23,9 @@ public class SwingMenuTest {
 	private static final String MENU_PROGRAM = "menu.program";
 	private static final String MENU_ABOUT   = "menu.program.about";
 	private static final String MENU_EXIT    = "menu.program.exit";
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();	
 
 	@SuppressWarnings("serial")
 	private static class JFrameWithMenu extends JFrame {
@@ -47,8 +52,11 @@ public class SwingMenuTest {
 		}
 	}
 
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testDoesntHaveMenuByText() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "Menu \"Blah\" not found (searched by label)" );
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
@@ -61,8 +69,11 @@ public class SwingMenuTest {
 			}
 		});
 	}
-	@Test(expected=AssertionError.class)
+	@Test
 	public void testDoesntHaveMenuByName() {
+		thrown.expect( AssertionError.class );
+		thrown.expectMessage( "Menu \"menu.blah\" not found (searched by name)" );
+		
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
