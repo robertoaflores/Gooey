@@ -22,11 +22,12 @@ import java.util.function.Predicate;
  * details on the handling of GUI components). Listener is indirectly enabled by tests 
  * expecting that a window will be displayed.
  */
+
 public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AWTEventListener {
 	private static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
 
-	private T                   target;
-	private Predicate<AWTEvent> criteria;
+	private       T                   target;
+	private final Predicate<AWTEvent> criteria;
 	
 	public GooeySwingToolkitListener(Predicate<AWTEvent> criteria) {
 		this.target   = null;
@@ -38,31 +39,29 @@ public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AW
 		else    TOOLKIT.removeAWTEventListener( this );
 	}
 	public T getTarget() {
-		while (target == null) {
-			synchronized(this) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					/*
-					 * don't print stack trace, since "wait" gets interrupted 
-					 * whenever a window doesn't display (which happens often).
-					 */
-//					e.printStackTrace();
-				}
+		synchronized(this) {
+//			Debug.Me("wait++++++");
+			try {
+				wait();
+			} catch (InterruptedException e) {
 			}
+//			Debug.Me("wait------");
 		}
 		return target;
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eventDispatched(AWTEvent event) {
-		if (target == null) {
-			synchronized(this) {
-				if (criteria.test( event )) {
-					target = (T)event.getSource();
-					notifyAll();
-				}
+//		Debug.Me("event+++++");
+		synchronized(this) {
+//			Debug.Me("criteria++");
+			if (criteria.test( event )) {
+				target = (T)event.getSource();
+//				Debug.Me("notifyAll*");
+				notifyAll();
 			}
+//			Debug.Me("criteria--");
 		}
+//		Debug.Me("event-----");
 	}
 }

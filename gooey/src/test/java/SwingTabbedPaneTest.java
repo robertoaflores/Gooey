@@ -41,7 +41,7 @@ public class SwingTabbedPaneTest {
 	private static final String TAB_2 = "#tab.2";
 	private static final String TAB_3 = "#tab.3";
 	private static final String TAB_4 = "#tab.4";
-
+	
 	@SuppressWarnings("serial")
 	private static class PanelWithTabs extends JPanel {
 		public PanelWithTabs() {
@@ -159,18 +159,24 @@ public class SwingTabbedPaneTest {
 	public void testDoesntHaveTabByName() {
 		thrown.expect( AssertionError.class );
 		thrown.expectMessage("Tab \"my.tab\" not found (searched by name)");
-		
+
+//		Debug.Me("++++++++++");
 		Gooey.capture( new GooeyFrame() {
 			@Override
 			public void invoke() {
+//				Debug.Me("invoke++++");
 				PanelWithTabs.main( new String[]{} );
+//				Debug.Me("invoke----");
 			}
 			@Override
 			public void test(JFrame frame) {
+//				Debug.Me("test++++++");
 				JTabbedPane   tabPane = Gooey.getComponent( frame, JTabbedPane.class );				
 				Gooey.getTab( tabPane, "my.tab", Match.BY_NAME );
+//				Debug.Me("test------");
 			}
 		});
+//		Debug.Me("----------");
 	}
 	@Test
 	public void testHasPanels() {
