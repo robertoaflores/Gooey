@@ -15,6 +15,7 @@ package edu.cnu.cs.gooey;
 import java.awt.AWTEvent;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
+import java.awt.event.WindowEvent;
 import java.util.function.Predicate;
 
 /**
@@ -39,20 +40,38 @@ public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AW
 		else    TOOLKIT.removeAWTEventListener( this );
 	}
 	public T getTarget() {
+//		Debug.Me("wait++++++");
 		synchronized(this) {
-//			Debug.Me("wait++++++");
 			try {
 				wait();
 			} catch (InterruptedException e) {
 			}
-//			Debug.Me("wait------");
 		}
+//		Debug.Me("wait------");
 		return target;
+	}
+	private String get(AWTEvent event) {
+		int    id = event.getID();
+		String result;
+		switch (id) {
+		case WindowEvent.WINDOW_ACTIVATED    : result = "WINDOW_ACTIVATED"; break;
+		case WindowEvent.WINDOW_CLOSED       : result = "WINDOW_CLOSED"; break;
+		case WindowEvent.WINDOW_CLOSING      : result = "WINDOW_CLOSING"; break;
+		case WindowEvent.WINDOW_DEACTIVATED  : result = "WINDOW_DEACTIVATED"; break;
+		case WindowEvent.WINDOW_DEICONIFIED  : result = "WINDOW_DEICONIFIED"; break;
+		case WindowEvent.WINDOW_GAINED_FOCUS : result = "WINDOW_GAINED_FOCUS"; break;
+		case WindowEvent.WINDOW_ICONIFIED    : result = "WINDOW_ICONIFIED"; break;
+		case WindowEvent.WINDOW_LOST_FOCUS   : result = "WINDOW_LOST_FOCUS"; break;
+		case WindowEvent.WINDOW_OPENED       : result = "WINDOW_OPENED"; break;
+		case WindowEvent.WINDOW_STATE_CHANGED: result = "WINDOW_STATE_CHANGED"; break;
+		default                              : result = "unknown";
+		}
+		return String.format( "(%d) %10d %20s", id, System.identityHashCode( event.getSource()), result );
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public void eventDispatched(AWTEvent event) {
-//		Debug.Me("event+++++");
+		Debug.Me("event+++++"+get(event));
 		synchronized(this) {
 //			Debug.Me("criteria++");
 			if (criteria.test( event )) {
