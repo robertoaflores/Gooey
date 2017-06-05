@@ -94,6 +94,7 @@ public abstract class GooeyDisplayable <T> {
 			}
 		} finally {
 			setEnableCapture( false );
+//			Debug.Me = false;
 		}
 	}
 }

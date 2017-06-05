@@ -38,7 +38,6 @@ public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T>
 	@Override
 	protected void close(T window) {
 		SwingUtilities.invokeLater(()->{
-//			System.out.println("closing...");
 			window.setVisible( false );
 		});
 	}
