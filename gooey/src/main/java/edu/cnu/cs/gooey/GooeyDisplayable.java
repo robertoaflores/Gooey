@@ -25,11 +25,11 @@ public abstract class GooeyDisplayable <T> {
 	 */
 	private static boolean FIRST = true; 
 	private static long getTimeout() {
-		if (FIRST) {
+//		if (FIRST) {
 //			FIRST = false;
 			return 3000L;
-		}
-		return 1000L;
+//		}
+//		return 1000L;
 	}
 
 	public    abstract void invoke();
@@ -56,6 +56,7 @@ public abstract class GooeyDisplayable <T> {
 	 * @throws AssertionError if no window is displayed.
 	 */
 	public final void capture() {
+		Debug.Me("capture+++");
 		setEnableCapture( true );
 		try {
 			SwingUtilities.invokeLater( ()->invoke() );
@@ -94,6 +95,7 @@ public abstract class GooeyDisplayable <T> {
 			}
 		} finally {
 			setEnableCapture( false );
+			Debug.Me("capture---");
 //			Debug.Me = false;
 		}
 	}

@@ -40,14 +40,14 @@ public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AW
 		else    TOOLKIT.removeAWTEventListener( this );
 	}
 	public T getTarget() {
-//		Debug.Me("wait++++++");
+		Debug.Me("wait++++++");
 		synchronized(this) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 			}
 		}
-//		Debug.Me("wait------");
+		Debug.Me("wait------");
 		return target;
 	}
 	private String get(AWTEvent event) {
@@ -81,6 +81,6 @@ public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AW
 			}
 //			Debug.Me("criteria--");
 		}
-//		Debug.Me("event-----");
+		Debug.Me("event-----");
 	}
 }
