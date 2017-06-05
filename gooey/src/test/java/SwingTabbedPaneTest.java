@@ -96,7 +96,7 @@ public class SwingTabbedPaneTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();	
 
-	@Test
+//	@Test
 	public void testHasTabs() {
 		Gooey.capture( new GooeyFrame() {
 			@Override
@@ -138,7 +138,7 @@ public class SwingTabbedPaneTest {
 			}
 		});
 	}
-	@Test
+//	@Test
 	public void testDoesntHaveTabByText() {
 		thrown.expect( AssertionError.class );
 		thrown.expectMessage("Tab \"Tab 9\" not found (searched by label)");
@@ -155,7 +155,7 @@ public class SwingTabbedPaneTest {
 			}
 		});
 	}
-	@Test
+//	@Test
 	public void testDoesntHaveTabByName() {
 		thrown.expect( AssertionError.class );
 		thrown.expectMessage("Tab \"my.tab\" not found (searched by name)");
@@ -178,7 +178,7 @@ public class SwingTabbedPaneTest {
 		});
 //		Debug.Me("----------");
 	}
-	@Test
+//	@Test
 	public void testHasPanels() {
 		Gooey.capture( new GooeyFrame() {
 			@Override
@@ -199,7 +199,7 @@ public class SwingTabbedPaneTest {
 		});
 	}
 
-	@Test
+//	@Test
 	public void testHasToolTips() {
 		Gooey.capture( new GooeyFrame() {
 			@Override

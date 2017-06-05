@@ -26,7 +26,7 @@ public abstract class GooeyDisplayable <T> {
 	private static boolean FIRST = true; 
 	private static long getTimeout() {
 		if (FIRST) {
-			FIRST = false;
+//			FIRST = false;
 			return 3000L;
 		}
 		return 1000L;
