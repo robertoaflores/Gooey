@@ -15,6 +15,10 @@ package edu.cnu.cs.gooey;
 import javax.swing.JFrame;
 
 public abstract class GooeyFrame extends GooeyWindow<JFrame> {
+	static {
+//		Debug.it("new JFrame");
+		new JFrame().dispose();
+	}
 	public GooeyFrame() {
 		this( "JFrame not detected" );
 	}
