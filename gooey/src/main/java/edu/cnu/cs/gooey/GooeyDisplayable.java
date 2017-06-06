@@ -11,19 +11,12 @@ package edu.cnu.cs.gooey;
  * <p>Company: JoSE Group, Christopher Newport University</p>
  */
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.swing.SwingUtilities;
-
-import edu.cnu.cs.gooey.utils.Debug;
-import edu.cnu.cs.gooey.utils.SwingExecutor;
-import edu.cnu.cs.gooey.utils.SwingTask;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public abstract class GooeyDisplayable <T> {
 	/*
@@ -44,12 +37,12 @@ public abstract class GooeyDisplayable <T> {
 	public    abstract void invoke();
 	public    abstract void test (T window);
 	protected abstract void close(T window);
-	
+
 	protected abstract void setEnableCapture(boolean on);
 	protected abstract T    getTarget();
 
 	private final String noWindowMessage;
-	
+
 	protected GooeyDisplayable(String noWindowMessage) {
 		if (noWindowMessage == null) {
 			throw new IllegalArgumentException( "parameter cannot be null" );
@@ -64,6 +57,7 @@ public abstract class GooeyDisplayable <T> {
 	 * If no window is detected within a waiting period the method throws an AssertionError.  
 	 * @throws AssertionError if no window is displayed.
 	 */
+	/*
 	public final void capture() {
 		Debug.it("capture+++");
 
@@ -104,6 +98,12 @@ public abstract class GooeyDisplayable <T> {
 			} catch (InterruptedException e) {
 			}
 		}; 
+		Runnable gapRunnable = ()->{
+			try {
+				Thread.sleep( 200 );
+			} catch (InterruptedException e) {
+			}
+		}; 
 //		CompletableFuture<Void> invoke  = CompletableFuture.runAsync(  invokeTask );
 //		CompletableFuture<Void> timeout = CompletableFuture.runAsync( timeoutTask );
 //		CompletableFuture<Void> capture = CompletableFuture.runAsync( captureTask );
@@ -113,7 +113,7 @@ public abstract class GooeyDisplayable <T> {
 //			try {
 //				SwingUtilities.invokeAndWait( ()->invoke() );
 //			} catch (InvocationTargetException | InterruptedException e) {
-//				Debug.Me("invoke.exception:"+e.getCause());
+//				Debug.it("invoke.exception:"+e.getCause());
 //				thrown.set( e.getCause() );
 //			}
 //		};
@@ -126,7 +126,7 @@ public abstract class GooeyDisplayable <T> {
 			}
 			return null;
 		};
-		CompletableFuture<Void> invoke  = CompletableFuture.   runAsync(  invokeRunnable, r->SwingUtilities.invokeLater(r) ).exceptionally( invokeCatcher );
+		CompletableFuture<Void> invoke  = CompletableFuture.   runAsync(  invokeRunnable, r->SwingUtilities.invokeLater(r)).exceptionally( invokeCatcher );
 		CompletableFuture<Void> timeout = CompletableFuture.   runAsync( timeoutRunnable );
 		CompletableFuture<T>    capture = CompletableFuture.supplyAsync( captureSupplier );
 		try {
@@ -144,28 +144,42 @@ public abstract class GooeyDisplayable <T> {
 //								try {
 //									SwingUtilities.invokeAndWait( testRunnable );
 //								} catch (InvocationTargetException | InterruptedException e) {
-//									Debug.Me("test.exception:"+e.getCause());
+//									Debug.it("test.exception:"+e.getCause());
 //									thrown.set( e.getCause() );
 //								}
 //							};
 //						} else {
 //							testWrapper = testRunnable;
 //						}
-//						Debug.Me("test++++");
+//						Debug.it("test++++");
 //						CompletableFuture<Void> test = CompletableFuture.runAsync( testWrapper ).thenRun( closeRunnable );
 //						test.join();
-//						Debug.Me("test----");
+//						Debug.it("test----");
+
+//						Function<Throwable,Void> testCatcher   = t->{
+//							if (t != null && thrown.get() == null) {
+//								Debug.it("test.exception: " + t.getCause());
+//								thrown.set( t.getCause() );
+//							}
+//							return null;
+//						};
+//						Debug.it("test++++");
+//						CompletableFuture<Void> test = CompletableFuture.runAsync( testRunnable, r->SwingUtilities.invokeLater(r) ).exceptionally( testCatcher ).thenRun( closeRunnable );
+//						test.join();
+//						Debug.it("test----");
+
 						Function<Throwable,Void> testCatcher   = t->{
-							if (t != null && thrown.get() == null) {
-								Debug.it("test.exception: " + t.getCause());
-								thrown.set( t.getCause() );
-							}
-							return null;
-						};
-						Debug.it("test++++");
-						CompletableFuture<Void> test = CompletableFuture.runAsync( testRunnable, r->SwingUtilities.invokeLater(r) ).exceptionally( testCatcher ).thenRun( closeRunnable );
-						test.join();
-						Debug.it("test----");
+						if (t != null && thrown.get() == null) {
+							Debug.it("test.exception: " + t.getCause());
+							thrown.set( t.getCause() );
+						}
+						return null;
+					};
+					Debug.it("test++++");
+					CompletableFuture<Void> test = CompletableFuture.runAsync( testRunnable, r->SwingUtilities.invokeLater(r) ).exceptionally( testCatcher ).thenRun( gapRunnable ).thenRun( closeRunnable );
+					Debug.it("test%%%%");
+					test.join();
+					Debug.it("test----");
 					} catch (InterruptedException | ExecutionException e) {
 						e.printStackTrace();
 					}
@@ -262,6 +276,108 @@ public abstract class GooeyDisplayable <T> {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		*/
+	}
+	 */
+	/*
+	public final synchronized void capture() {
+		// enables capture criteria and begins listening
+		setEnableCapture( true );
+
+		AtomicReference<Throwable> thrown          = new AtomicReference<>( null );
+		Runnable                   invokeRunnable  = ()->invoke(); 
+		Function<Throwable,Void>   invokeCatcher   = t->{
+			if (t != null && thrown.get() == null) {
+				Debug.it("invoke.exception: " + t.getCause());
+				thrown.set( t.getCause() );
+			}
+			return null;
+		};
+		Runnable                   timeoutRunnable = ()->{
+			try {
+				Thread.sleep( getTimeout() );
+			} catch (InterruptedException e) {
+			}
+		};
+		Supplier<T>                captureSupplier = ()->getTarget();
+		CompletableFuture<Void>    invoke          = CompletableFuture.   runAsync(  invokeRunnable ).exceptionally( invokeCatcher );
+		CompletableFuture<Void>    timeout         = CompletableFuture.   runAsync( timeoutRunnable );
+		CompletableFuture<T>       capture         = CompletableFuture.supplyAsync( captureSupplier );
+		CompletableFuture.anyOf( capture, timeout ).join();
+		Debug.it(String.format( "invoke(%s) capture(%s) timeout(%s)", invoke.isDone(), capture.isDone(), timeout.isDone() ));
+		try {
+			if (thrown.get() == null) {
+				if (capture.isDone()) {
+					try {
+						T target = capture.get();
+						try {
+							Debug.it("test----");
+							test(target);
+						} finally {
+							close(target);
+							Debug.it("test----");
+						}
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+					}
+				} else {
+					if (timeout.isDone() && thrown.get() == null) {
+						thrown.set( new AssertionError( noWindowMessage ));
+					}
+				}
+			}
+			Throwable caught = thrown.get();  
+			if (caught != null) {
+				Debug.it("exception "+caught);
+				if      (caught instanceof RuntimeException) throw (RuntimeException)  caught;
+				else if (caught instanceof AssertionError)   throw (AssertionError)    caught;
+				else                                         throw new AssertionError( caught );
+			}
+		} finally {
+			setEnableCapture( false );
+			Debug.it("capture---");
+		}
+	}
+	*/
+	public final void capture() {
+		// enables capture criteria and begins listening
+		setEnableCapture( true );
+
+		// runs methods 
+		// "invoke", which displays a window
+		// "getTarget", which returns captured window
+		ExecutorService      executor   = Executors.newCachedThreadPool();
+		CompletionService<T> completion = new ExecutorCompletionService<>( executor );
+		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
+		Future<T>            capture    = completion.submit( ()->  getTarget() );
+		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( getTimeout() ); return null; } );
+		try {
+			do {
+				Future<?> done = completion.take();
+				if (invoke == done) {
+					invoke.get(); // if "invoke" threw an exception then "get" throws an ExecutionException (caught below);  
+                                  // otherwise "invoke" terminated normally and we ignore the value it returned.
+				}
+				if (timeout == done) {
+					throw new AssertionError( noWindowMessage );
+				}
+			} while (!capture.isDone());
+
+			T captured = capture.get();
+			try {
+				test( captured );
+			} finally {
+				Thread.sleep( 200 );
+				close( captured );
+			}
+		} catch (ExecutionException e) {
+			Throwable t = e.getCause();
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			setEnableCapture( false );
+		}
 	}
 }
