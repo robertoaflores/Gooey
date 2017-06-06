@@ -58,8 +58,8 @@ public class SwingExceptionsTest {
 
 	@Test
 	public void testInvokeThrowsException() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JFrame not detected" );
+		thrown.expect( RuntimeException.class );
+		thrown.expectMessage( "thrown in invoke()" );
 		
 		Gooey.capture(
 			new GooeyFrame() {
