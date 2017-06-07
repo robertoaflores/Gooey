@@ -134,6 +134,10 @@ public class SwingEmptyJFrameTest {
 				                            c instanceof JLayeredPane ))
 				          .forEach( c-> fail("Unexpected JComponent: "+ c.getClass().getName()));
 			}
+			@Override
+			protected long getTimeout() {
+				return 3000L;
+			}
 		});
 	}
 	@Test
