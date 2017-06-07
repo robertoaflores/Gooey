@@ -11,13 +11,13 @@ import org.junit.Test;
 import edu.cnu.cs.gooey.Gooey;
 
 public class GooeyTest {
-	private static final double BUILD_VERSION = 1.8;
+	private static final String BUILD_VERSION = "1.8.0";
 	
 	@Test
 	public void testVersion() {
-		double actual   = Gooey.getVersion();
-		double expected = BUILD_VERSION;
-		assertTrue( "", expected <= actual );
+		String actual   = Gooey.getVersion();
+		String expected = BUILD_VERSION;
+		assertTrue( "", actual.startsWith( expected ));
 	}
 	@Test
 	public void testVersionWithReflection() {
@@ -25,9 +25,9 @@ public class GooeyTest {
 		try {
 			Class<?> gooey    = Class.forName("edu.cnu.cs.gooey.Gooey");
 			Method   version  = gooey.getMethod( "getVersion" );
-			Double   actual   = (Double) version.invoke( null );
-			double   expected = BUILD_VERSION;
-			assertTrue( updateGooey, expected <= actual );
+			String   actual   = (String) version.invoke( null );
+			String   expected = BUILD_VERSION;
+			assertTrue( "", actual.startsWith( expected ));
 		} catch (ClassNotFoundException |
 				 NoSuchMethodException  | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			fail( updateGooey );

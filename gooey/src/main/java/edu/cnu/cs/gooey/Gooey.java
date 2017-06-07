@@ -49,7 +49,7 @@ public class Gooey {
 	/**
 	 * Current build version.
 	 */
-	private static final double BUILD_VERSION = 1.801;
+	private static final String BUILD_VERSION = "1.8.05";
 
 	/**
 	 * Enumerated type indicating whether a component is sought by name or displayed text.
@@ -73,6 +73,10 @@ public class Gooey {
 			return string;
 		}
 	}
+	
+	public static void main(String[] args) {
+		System.out.println( BUILD_VERSION );
+	}
 
 	/**
 	 * Private default (and only) constructor. No instance of Gooey can be created.
@@ -85,7 +89,7 @@ public class Gooey {
 	 * Intended to prevent that older versions are used in current projects.
 	 * @return current build version number.
 	 */
-	public static final double getVersion() {
+	public static final String getVersion() {
 		return BUILD_VERSION;
 	}
 	/**
