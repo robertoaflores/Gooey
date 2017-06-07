@@ -31,6 +31,10 @@ public class SwingJOptionPaneDialogsTest {
 
 				Gooey.getLabel( dialog, "random message" );
 			}
+			@Override
+			public long getTimeout() {
+				return 3000L;
+			}
 		});
 	}
 

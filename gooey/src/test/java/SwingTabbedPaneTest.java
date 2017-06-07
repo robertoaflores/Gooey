@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;

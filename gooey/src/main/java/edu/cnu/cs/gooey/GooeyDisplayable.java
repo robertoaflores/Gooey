@@ -19,8 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public abstract class GooeyDisplayable<T> {
-	private static final long TIMEOUT = 2000;
-	
 	public    abstract void invoke();
 	public    abstract void test (T window);
 	protected abstract void close(T window);
@@ -37,6 +35,10 @@ public abstract class GooeyDisplayable<T> {
 		this.noWindowMessage = noWindowMessage;
 	}
 
+	protected long getTimeout() {
+		return 1000L;
+	}
+	
 	/**
 	 * This method calls the code displaying a window, waits for the window to display (within a timeout period) and calls 
 	 * the method to test this window. It calls abstract methods <code>invoke</code> 
@@ -54,7 +56,7 @@ public abstract class GooeyDisplayable<T> {
 		CompletionService<T> completion = new ExecutorCompletionService<>( executor );
 		Future<?>            invoke     = completion.submit( ()->{ invoke(); return null; } ); 
 		Future<T>            capture    = completion.submit( ()->  getTarget() );
-		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( TIMEOUT ); return null; } );
+		Future<?>            timeout    = completion.submit( ()->{ Thread.sleep( getTimeout() ); return null; } );
 		try {
 			do {
 				Future<?> done = completion.take();
