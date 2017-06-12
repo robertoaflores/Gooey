@@ -8,16 +8,8 @@
  */
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
-
-repositories {
-    jcenter()
-}
-
-dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    testCompile 'junit:junit:4.12'
-}
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 def getGooeyVersion = {
     def stdout = new ByteArrayOutputStream()
@@ -27,6 +19,20 @@ def getGooeyVersion = {
         standardOutput = stdout
     }
     return stdout.toString().trim()
+}
+
+group    = 'edu.cnu.cs'
+version getGooeyVersion()
+archivesBaseName = "gooey"
+
+repositories {
+    jcenter()
+	mavenCentral()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    testCompile 'junit:junit:4.12'
 }
 
 jar {
@@ -44,4 +50,65 @@ jar.doFirst {
 			'Built-JDK': System.getProperty('java.version'), \
 			'Build-Time': new Date().format("yyyy-MM-dd' 'HH:mm:ss")
 	}
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: mavenCentralUsername, password: mavenCentralPassword)
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: mavenCentralUsername, password: mavenCentralPassword)
+            }
+
+            pom.project {
+               name 'Gooey'
+               packaging 'jar'
+               description 'Gooey is a lean jUnit testing library for Java Swing applications.'
+               url 'https://github.com/robertoaflores/Gooey/'
+
+               scm {
+                   url 'scm:git@github.com:robertoaflores/Gooey.git'
+                   connection 'scm:git@github.com:robertoaflores/Gooey.git'
+                   developerConnection 'scm:git@github.com:robertoaflores/Gooey.git'
+               }
+
+               licenses {
+                   license {
+                       name 'The MIT License'
+                       url 'http://opensource.org/licenses/MIT'
+                       distribution 'repo'
+                   }
+               }
+
+               developers {
+                   developer {
+                       id 'roberto.flores'
+                       name 'Roberto Flores'
+                   }
+               }
+           }
+        }
+    }
 }
