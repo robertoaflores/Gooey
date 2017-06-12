@@ -35,8 +35,16 @@ public abstract class GooeyDisplayable<T> {
 		this.noWindowMessage = noWindowMessage;
 	}
 
+	private static final long    TIMEOUT_DEFAULT_FIRST = 3000L;
+	private static final long    TIMEOUT_DEFAULT       = 1000L;
+	private static       boolean TIMEOUT_FIRST         = true;
 	protected long getTimeout() {
-		return 1000L;
+		if (TIMEOUT_FIRST) {
+			TIMEOUT_FIRST = false;
+			return TIMEOUT_DEFAULT_FIRST;
+		} else {
+			return TIMEOUT_DEFAULT;
+		}
 	}
 	
 	/**

@@ -49,7 +49,7 @@ public class Gooey {
 	/**
 	 * Current build version.
 	 */
-	private static final String BUILD_VERSION = "1.8.05";
+	private static final String BUILD_VERSION = "1.8.0";
 
 	/**
 	 * Enumerated type indicating whether a component is sought by name or displayed text.
@@ -329,6 +329,7 @@ public class Gooey {
 	 * @param <T> class type sub-classing from Component. 
 	 * @param container container to evaluate.
 	 * @param type class of components sought.
+	 * @param criteria criteria indicating an accepting component.
 	 * @return list of components found.
 	 */
 	public static <T extends Component> List<T> getComponents(Container container, Class<T> type, Predicate<T> criteria) {
