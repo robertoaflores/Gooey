@@ -10,10 +10,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
-<<<<<<< HEAD
 apply plugin: 'eclipse'
-=======
->>>>>>> branch 'master' of https://robertoaflores@github.com/robertoaflores/Gooey.git
 
 def getGooeyVersion = {
     def stdout = new ByteArrayOutputStream()
@@ -23,10 +20,6 @@ def getGooeyVersion = {
         standardOutput = stdout
     }
     return stdout.toString().trim()
-<<<<<<< HEAD
-//    return "1.8.0" // if not compiled
-=======
->>>>>>> branch 'master' of https://robertoaflores@github.com/robertoaflores/Gooey.git
 }
 
 group    = 'edu.cnu.cs'
