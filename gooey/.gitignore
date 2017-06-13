@@ -1,6 +1,8 @@
 /.gradle/
 /build/
+
+!/build/libs/gooey*.jar
+
 /bin/
 /.DS_Store
 /.settings/
-!/gooey*.jar

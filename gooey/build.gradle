@@ -20,7 +20,7 @@ def getGooeyVersion = {
         standardOutput = stdout
     }
     return stdout.toString().trim()
-//    return "1.8.0"
+//    return "1.8.0" // if not compiled
 }
 
 group    = 'edu.cnu.cs'
