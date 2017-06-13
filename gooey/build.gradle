@@ -20,6 +20,7 @@ def getGooeyVersion = {
         standardOutput = stdout
     }
     return stdout.toString().trim()
+//    return "1.8.0" // use after cleaning
 }
 
 group    = 'edu.cnu.cs'
