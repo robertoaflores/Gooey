@@ -1,11 +1,10 @@
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyDialog;
@@ -26,8 +25,8 @@ public class SwingJOptionPaneDialogsTest {
 			}
 			@Override
 			public void test(JDialog dialog) {
-				assertEquals( "Unexpected title", "Message", dialog.getTitle() );
-				assertTrue  ( "", Gooey.getButton( dialog, "OK"    ).isDefaultButton());
+				assertEquals( "Message", dialog.getTitle(), "Unexpected title" );
+				assertTrue  ( Gooey.getButton( dialog, "OK"    ).isDefaultButton());
 
 				Gooey.getLabel( dialog, "random message" );
 			}
@@ -52,8 +51,8 @@ public class SwingJOptionPaneDialogsTest {
 			}
 			@Override
 			public void test(JDialog dialog) {
-				assertEquals( "Unexpected title", "Select an Option", dialog.getTitle() );
-				assertTrue  ( "", Gooey.getButton( dialog, "Yes"    ).isDefaultButton());
+				assertEquals( "Select an Option", dialog.getTitle(), "Unexpected title" );
+				assertTrue  ( Gooey.getButton( dialog, "Yes"    ).isDefaultButton());
 
 				Gooey.getButton( dialog, "No"     );
 				Gooey.getButton( dialog, "Cancel" );
@@ -76,8 +75,8 @@ public class SwingJOptionPaneDialogsTest {
 			}
 			@Override
 			public void test(JDialog dialog) {
-				assertEquals( "Unexpected title", "Input", dialog.getTitle() );
-				assertTrue  ( "", Gooey.getButton( dialog, "OK" ).isDefaultButton());
+				assertEquals( "Input", dialog.getTitle(), "Unexpected title" );
+				assertTrue  ( Gooey.getButton( dialog, "OK" ).isDefaultButton());
 
 				Gooey.getButton( dialog, "Cancel" );
 				Gooey.getLabel ( dialog, "random message" );

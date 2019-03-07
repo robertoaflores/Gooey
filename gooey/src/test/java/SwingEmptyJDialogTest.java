@@ -1,7 +1,6 @@
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -12,7 +11,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyDialog;
@@ -41,7 +40,7 @@ public class SwingEmptyJDialogTest {
 			@Override
 			public void test(JDialog dialog) {
 				String actual = dialog.getTitle();
-				assertTrue( "", actual.isEmpty() );
+				assertTrue( actual.isEmpty() );
 			}
 		});
 	}
@@ -72,9 +71,9 @@ public class SwingEmptyJDialogTest {
 			}
 			@Override
 			public void test(JDialog frame) {
-				assertTrue  ( "JFrame should be displayed", frame.isShowing() );
+				assertTrue  ( frame.isShowing(), "JFrame should be displayed" );
 				frame.dispatchEvent(new WindowEvent( frame, WindowEvent.WINDOW_CLOSING ));
-				assertFalse ( "JFrame should be hidden",    frame.isShowing() );
+				assertFalse ( frame.isShowing(), "JFrame should be hidden" );
 			}
 		});
 	}

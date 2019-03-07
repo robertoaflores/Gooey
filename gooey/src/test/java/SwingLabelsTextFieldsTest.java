@@ -13,7 +13,7 @@
  * <p>Company: JoSE Group, Christopher Newport University</p>
  */
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.FlowLayout;
 
@@ -21,7 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyFrame;
@@ -93,9 +93,9 @@ public class SwingLabelsTextFieldsTest {
 					JLabel mLabelByName = Gooey.getLabel( frame, MIDDLE_LABEL, Gooey.Match.BY_NAME );
 					JLabel lLabelByName = Gooey.getLabel( frame,   LAST_LABEL, Gooey.Match.BY_NAME );
 					
-					assertTrue( "", fLabelByText == fLabelByName );
-					assertTrue( "", mLabelByText == mLabelByName );
-					assertTrue( "", lLabelByText == lLabelByName );
+					assertTrue( fLabelByText == fLabelByName );
+					assertTrue( mLabelByText == mLabelByName );
+					assertTrue( lLabelByText == lLabelByName );
 				}
 			});
 	}

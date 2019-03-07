@@ -1,8 +1,6 @@
-
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -22,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyDialog;
@@ -147,9 +145,6 @@ public class SwingNameJFrameTest {
 		private void closeWindow() {
 			int what = JOptionPane.showConfirmDialog( NameJFrame.this, "Wanna close?" );
 			if (what == JOptionPane.YES_OPTION) {
-//				JFrame target = NameJFrame.this;
-//				System.out.printf( "%-30s: (active:%-5s) (valid:%-5s) (enabled:%-5s) (focused:%-5s) (showing:%-5s) %s %s%n", "test.dispose", target.isActive(), target.isValid(), target.isEnabled(), target.isFocused(), target.isShowing(), target.getName(), Thread.currentThread() );
-//				System.out.printf( "dispose()%n" );
 				dispose();
 			}
 		}
@@ -179,7 +174,7 @@ public class SwingNameJFrameTest {
 			public void test(JFrame frame) {
 				String actual   = frame.getTitle();
 				String expected = "Example";
-				assertEquals( "", expected, actual );
+				assertEquals( expected, actual );
 			}
 		});
 	}
@@ -198,13 +193,13 @@ public class SwingNameJFrameTest {
 				JMenuItem       exit    = Gooey.getMenu   ( program, "Exit" ); 
 
 				List<JMenu>     menus   = Gooey.getMenus( menubar );
-				assertEquals( "Incorrect result", 1, menus.size() );
-				assertTrue  ( "Incorrect result",    menus.contains( program ));
+				assertEquals( 1, menus.size() );
+				assertTrue  (    menus.contains( program ));
 
 				List<JMenuItem> items = Gooey.getMenus( program );
-				assertEquals( "Incorrect result", 2, items.size() );
-				assertTrue  ( "Incorrect result",    items.contains( edit ));
-				assertTrue  ( "Incorrect result",    items.contains( exit ));
+				assertEquals( 2, items.size() );
+				assertTrue  (    items.contains( edit ));
+				assertTrue  (    items.contains( exit ));
 			}
 		});
 	}
@@ -247,7 +242,7 @@ public class SwingNameJFrameTest {
 				JMenu     program = Gooey.getMenu   ( menubar, "Program" );
 				JMenuItem exit    = Gooey.getMenu   ( program, "Exit" ); 
 
-				assertTrue ( "JFrame should be displayed", frame.isShowing() );
+				assertTrue ( frame.isShowing(), "JFrame should be displayed" );
 				Gooey.capture( new GooeyDialog() {
 					@Override
 					public void invoke() {
@@ -258,8 +253,7 @@ public class SwingNameJFrameTest {
 						Gooey.getButton( dialog, "Yes" ).doClick();
 					}
 				});
-//				System.out.printf( "did we close?%n" );
-				assertFalse( "JFrame should be hidden",   frame.isShowing() );
+				assertFalse( frame.isShowing(), "JFrame should be hidden" );
 			}
 		});
 	}
@@ -310,20 +304,20 @@ public class SwingNameJFrameTest {
 					}
 					@Override
 					public void test(JDialog dialog) {
-						assertEquals( "Incorrect title", "Edit Name", dialog.getTitle() );
+						assertEquals( "Edit Name", dialog.getTitle() );
 
 						JButton ok     = Gooey.getButton( dialog, "Ok");
 						JButton cancel = Gooey.getButton( dialog, "Cancel");
 
 						List<JButton> items = Gooey.getComponents( dialog, JButton.class );
-						assertEquals( "Incorrect result", 2, items.size() );
-						assertTrue  ( "Incorrect result",    items.contains( ok ));
-						assertTrue  ( "Incorrect result",    items.contains( cancel ));
+						assertEquals( 2, items.size() );
+						assertTrue  (    items.contains( ok ));
+						assertTrue  (    items.contains( cancel ));
 
 						Gooey.getLabel ( dialog, "Name: ");
 
 						JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
-						assertEquals( "Incorrect result", "<no name>", jtf.getText() );
+						assertEquals( "<no name>", jtf.getText() );
 					}
 				});
 			}
@@ -347,128 +341,128 @@ public class SwingNameJFrameTest {
 					}
 					@Override
 					public void test(JDialog dialog) {
-						assertEquals( "Incorrect title", "Edit Name", dialog.getTitle() );
+						assertEquals( "Edit Name", dialog.getTitle() );
 
 						JButton ok     = Gooey.getButton( dialog, "Ok");
 						JButton cancel = Gooey.getButton( dialog, "Cancel");
 
 						List<JButton> items = Gooey.getComponents( dialog, JButton.class );
-						assertEquals( "Incorrect result", 2, items.size() );
-						assertTrue  ( "Incorrect result",    items.contains( ok ));
-						assertTrue  ( "Incorrect result",    items.contains( cancel ));
+						assertEquals( 2, items.size() );
+						assertTrue  (    items.contains( ok ));
+						assertTrue  (    items.contains( cancel ));
 
 						Gooey.getLabel ( dialog, "Name: ");
 
 						JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
-						assertEquals( "Incorrect result", "<no name>", jtf.getText() );
+						assertEquals( "<no name>", jtf.getText() );
 					}
 				});
 			}
 		});
 	}
-		@Test
-		public void testEditDialog_CancellingDoesNotChangeName() {
-			Gooey.capture( new GooeyFrame() {
-				@Override
-				public void invoke() {
-					NameJFrame.main(new String[]{});
-				}
-				@Override
-				public void test(JFrame frame) {
-					JLabel  label = Gooey.getLabel ( frame, "<no name>" );
-					JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
-	
-					Gooey.capture( new GooeyDialog() {
-						@Override
-						public void invoke() {
-							edit.doClick();
-						}
-						@Override
-						public void test(JDialog dialog) {
-							JButton cancel = Gooey.getButton( dialog, "Cancel");
-							cancel.doClick();
-						}
-					});
-					assertEquals( "Incorrect result", "<no name>", label.getText() );
-				}
-			});
-		}
-		@Test
-		public void testEditDialog_GivingNameChangesName() {
-			Gooey.capture( new GooeyFrame() {
-				@Override
-				public void invoke() {
-					NameJFrame.main(new String[]{});
-				}
-				@Override
-				public void test(JFrame frame) {
-					JLabel  label = Gooey.getLabel ( frame, "<no name>" );
-					JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
-	
-					Gooey.capture( new GooeyDialog() {
-						@Override
-						public void invoke() {
-							edit.doClick();
-						}
-						@Override
-						public void test(JDialog dialog) {
-							JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
-							JButton    ok  = Gooey.getButton   ( dialog, "Ok");
-							jtf.setText( "Neil Peart" );
-							ok .doClick();
-						}
-					});
-					assertEquals( "Incorrect result", "Neil Peart", label.getText() );
-				}
-			});
-		}
-		@Test
-		public void testEditDialog_EmptyNameHasErrorDialog() {
-			Gooey.capture( new GooeyFrame() {
-				@Override
-				public void invoke() {
-					NameJFrame.main(new String[]{});
-				}
-				@Override
-				public void test(JFrame frame) {
-					JLabel  label = Gooey.getLabel ( frame, "<no name>" );
-					JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
+	@Test
+	public void testEditDialogCancellingDoesNotChangeName() {
+		Gooey.capture( new GooeyFrame() {
+			@Override
+			public void invoke() {
+				NameJFrame.main(new String[]{});
+			}
+			@Override
+			public void test(JFrame frame) {
+				JLabel  label = Gooey.getLabel ( frame, "<no name>" );
+				JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
 
-					Gooey.capture( new GooeyDialog() {
-						@Override
-						public void invoke() {
-							edit.doClick();
-						}
-						@Override
-						public void test(JDialog dialog) {
-							JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
-							JButton    ok  = Gooey.getButton   ( dialog, "Ok");
-							jtf.setText( "" );
-							Gooey.capture( new GooeyDialog() {
-								@Override
-								public void invoke() {
-									ok.doClick();
-								}
-								@Override
-								public void test(JDialog dialog) {
-									assertEquals( "Incorrect title", "Name Input Error", dialog.getTitle() );
+				Gooey.capture( new GooeyDialog() {
+					@Override
+					public void invoke() {
+						edit.doClick();
+					}
+					@Override
+					public void test(JDialog dialog) {
+						JButton cancel = Gooey.getButton( dialog, "Cancel");
+						cancel.doClick();
+					}
+				});
+				assertEquals( "<no name>", label.getText() );
+			}
+		});
+	}
+	@Test
+	public void testEditDialogGivingNameChangesName() {
+		Gooey.capture( new GooeyFrame() {
+			@Override
+			public void invoke() {
+				NameJFrame.main(new String[]{});
+			}
+			@Override
+			public void test(JFrame frame) {
+				JLabel  label = Gooey.getLabel ( frame, "<no name>" );
+				JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
 
-									Gooey.getLabel ( dialog, "The name cannot be empty.");
+				Gooey.capture( new GooeyDialog() {
+					@Override
+					public void invoke() {
+						edit.doClick();
+					}
+					@Override
+					public void test(JDialog dialog) {
+						JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
+						JButton    ok  = Gooey.getButton   ( dialog, "Ok");
+						jtf.setText( "Neil Peart" );
+						ok .doClick();
+					}
+				});
+				assertEquals( "Neil Peart", label.getText() );
+			}
+		});
+	}
+	@Test
+	public void testEditDialogEmptyNameHasErrorDialog() {
+		Gooey.capture( new GooeyFrame() {
+			@Override
+			public void invoke() {
+				NameJFrame.main(new String[]{});
+			}
+			@Override
+			public void test(JFrame frame) {
+				JLabel  label = Gooey.getLabel ( frame, "<no name>" );
+				JButton edit  = Gooey.getButton( frame, "Edit Name" ); 
 
-									JButton       ok    = Gooey.getButton   ( dialog, "OK");
-									List<JButton> items = Gooey.getComponents( dialog, JButton.class );
-									assertEquals( "Incorrect result", 1, items.size() );
-									assertTrue  ( "Incorrect result",    items.contains( ok ));
+				Gooey.capture( new GooeyDialog() {
+					@Override
+					public void invoke() {
+						edit.doClick();
+					}
+					@Override
+					public void test(JDialog dialog) {
+						JTextField jtf = Gooey.getComponent( dialog, JTextField.class );
+						JButton    ok  = Gooey.getButton   ( dialog, "Ok");
+						jtf.setText( "" );
+						Gooey.capture( new GooeyDialog() {
+							@Override
+							public void invoke() {
+								ok.doClick();
+							}
+							@Override
+							public void test(JDialog dialog) {
+								assertEquals( "Name Input Error", dialog.getTitle() );
 
-									ok .doClick();
-								}
-							});
-							JButton    cancel = Gooey.getButton   ( dialog, "Cancel");
-							cancel.doClick();
-						}
-					});
-					assertEquals( "Incorrect result", "<no name>", label.getText() );
-				}
-			});
-		}
+								Gooey.getLabel ( dialog, "The name cannot be empty.");
+
+								JButton       ok    = Gooey.getButton   ( dialog, "OK");
+								List<JButton> items = Gooey.getComponents( dialog, JButton.class );
+								assertEquals( 1, items.size() );
+								assertTrue  (    items.contains( ok ));
+
+								ok .doClick();
+							}
+						});
+						JButton    cancel = Gooey.getButton   ( dialog, "Cancel");
+						cancel.doClick();
+					}
+				});
+				assertEquals( "<no name>", label.getText() );
+			}
+		});
+	}
 }

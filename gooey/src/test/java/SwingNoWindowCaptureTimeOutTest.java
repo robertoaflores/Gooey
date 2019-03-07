@@ -1,33 +1,29 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyDialog;
 import edu.cnu.cs.gooey.GooeyFrame;
 
 public class SwingNoWindowCaptureTimeOutTest {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();	
-	
 	@Test
 	public void testNothingInvoked() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JFrame not detected" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-			}
-			@Override
-			public void test(JFrame frame) {
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+				}
+				@Override
+				public void test(JFrame frame) {
+				}
+			})
+		);
+		assertEquals( "JFrame not detected", e.getMessage() );
 	}
 
 	
@@ -49,20 +45,19 @@ public class SwingNoWindowCaptureTimeOutTest {
 	}
 	@Test
 	public void testWindowNotDisplayed() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JFrame not detected" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				InvisibleWindow.main(new String[]{});
-			}
-			@Override
-			public void test(JFrame frame) {
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					InvisibleWindow.main(new String[]{});
+				}
+				@Override
+				public void test(JFrame frame) {
+				}
+			})
+		);
+		assertEquals( "JFrame not detected", e.getMessage() );
 	}
-	
 	
 	private static class NoWindow {
 		public static void main(String[] args) {
@@ -70,11 +65,8 @@ public class SwingNoWindowCaptureTimeOutTest {
 	}
 	@Test
 	public void testNoWindowDisplayed() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JFrame not detected" );
-		
-		Gooey.capture(
-			new GooeyFrame() {
+		Throwable e = assertThrows( AssertionError.class, () ->
+		Gooey.capture( new GooeyFrame() {
 				@Override
 				public void invoke() {
 					NoWindow.main( new String[]{} );
@@ -82,15 +74,14 @@ public class SwingNoWindowCaptureTimeOutTest {
 				@Override
 				public void test(JFrame window) {
 				}
-			});
+			})
+		);
+		assertEquals( "JFrame not detected", e.getMessage() );
 	}
 	@Test
 	public void testNoDialogDisplayed() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JDialog not detected" );
-		
-		Gooey.capture(
-			new GooeyDialog() {
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyDialog() {
 				@Override
 				public void invoke() {
 					NoWindow.main( new String[]{} );
@@ -98,53 +89,53 @@ public class SwingNoWindowCaptureTimeOutTest {
 				@Override
 				public void test(JDialog window) {
 				}
-			});
+			})
+		);
+		assertEquals( "JDialog not detected", e.getMessage() );
 	}
 
 	// A JFrame (not a JDialog) displayed 
 	@Test
 	public void testFrameInsteadOfExpectedDialogDisplayed() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JDialog not detected" );
-		
-		JFrame frame = new JFrame("I'm a JFrame");
-		frame.setSize( 300, 100 );
-		try {
-			Gooey.capture(
-					new GooeyDialog() {
-						@Override
-						public void invoke() {
-							frame.setVisible( true );
-						}
-						@Override
-						public void test(JDialog frame) {
-						}
-					});
-		} finally {
-			frame.dispose();
-		}
+		Throwable e = assertThrows( AssertionError.class, () -> {
+			JFrame frame = new JFrame("I'm a JFrame");
+			frame.setSize( 300, 100 );
+			try {
+				Gooey.capture( new GooeyDialog() {
+					@Override
+					public void invoke() {
+						frame.setVisible( true );
+					}
+					@Override
+					public void test(JDialog frame) {
+					}
+				});
+			} finally {
+				frame.dispose();
+			}
+		});
+		assertEquals( "JDialog not detected", e.getMessage() );
 	}
 	// A JDialog (not a JFrame) displayed 
 	@Test
 	public void testDialogInsteadOfExpectedFrameDisplayed() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "JFrame not detected" );
-		
-		JDialog dialog = new JDialog(new JFrame(),"I'm a JDialog",true);
-		dialog.setSize ( 300, 200 );
-		try {
-			Gooey.capture(
-					new GooeyFrame() {
-						@Override
-						public void invoke() {
-							dialog.setVisible( true );
-						}
-						@Override
-						public void test(JFrame frame) {
-						}
-					});
-		} finally {
-			dialog.dispose();
-		}
+		Throwable e = assertThrows( AssertionError.class, () -> {
+			JDialog dialog = new JDialog(new JFrame(),"I'm a JDialog",true);
+			dialog.setSize ( 300, 200 );
+			try {
+				Gooey.capture( new GooeyFrame() {
+					@Override
+					public void invoke() {
+						dialog.setVisible( true );
+					}
+					@Override
+					public void test(JFrame frame) {
+					}
+				});
+			} finally {
+				dialog.dispose();
+			}
+		});
+		assertEquals( "JFrame not detected", e.getMessage() );
 	}
 }

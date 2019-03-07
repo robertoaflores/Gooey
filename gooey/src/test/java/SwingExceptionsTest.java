@@ -11,11 +11,13 @@
  */
 
 import javax.swing.JFrame;
-import java.awt.Window;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.awt.Window;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyFrame;
@@ -23,46 +25,40 @@ import edu.cnu.cs.gooey.GooeyWindow;
 
 public class SwingExceptionsTest {
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();	
-
 	@Test
 	public void testCaptureGooeyWindowWithNullClass() {
-		thrown.expect( IllegalArgumentException.class );
-		thrown.expectMessage( "parameter cannot be null" );
-		
-		Gooey.capture( new GooeyWindow<Window>( null, "" ) {
-			@Override
-			public void invoke() {
-			}
-			@Override
-			public void test(Window capturedWindow) {
-			}
-		});
+		Throwable e = assertThrows( IllegalArgumentException.class, () ->
+			Gooey.capture( new GooeyWindow<Window>( null, "" ) {
+				@Override
+				public void invoke() {
+				}
+				@Override
+				public void test(Window capturedWindow) {
+				}
+			})
+		);
+		assertEquals( "parameter cannot be null", e.getMessage());		
 	}
 	
 	@Test
 	public void testCaptureGooeyWindowWithNullMessage() {
-		thrown.expect( IllegalArgumentException.class );
-		thrown.expectMessage( "parameter cannot be null" );
-		
-		Gooey.capture( new GooeyFrame( null ) {
-			@Override
-			public void invoke() {
-			}
-			@Override
-			public void test(JFrame capturedWindow) {
-			}
-		});
+		Throwable e = assertThrows( IllegalArgumentException.class, () ->
+			Gooey.capture( new GooeyFrame( null ) {
+				@Override
+				public void invoke() {
+				}
+				@Override
+				public void test(JFrame capturedWindow) {
+				}
+			})
+		);
+		assertEquals( "parameter cannot be null", e.getMessage());		
 	}
 
 	@Test
 	public void testInvokeThrowsException() {
-		thrown.expect( RuntimeException.class );
-		thrown.expectMessage( "thrown in invoke()" );
-		
-		Gooey.capture(
-			new GooeyFrame() {
+		Throwable e = assertThrows( RuntimeException.class, () ->
+			Gooey.capture( new GooeyFrame() {
 				@Override
 				public void invoke() {
 					throw new RuntimeException("thrown in invoke()");
@@ -70,13 +66,13 @@ public class SwingExceptionsTest {
 				@Override
 				public void test(JFrame window) {
 				}
-			});
+			})
+		);
+		assertEquals( "thrown in invoke()", e.getMessage());		
 	}
 	@Test
 	public void testTestThrowsException() {
-		thrown.expect( RuntimeException.class );
-		thrown.expectMessage( "thrown in test()" );
-		
+		Throwable e = assertThrows( RuntimeException.class, () ->
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override
@@ -87,7 +83,8 @@ public class SwingExceptionsTest {
 				public void test(JFrame window) {
 					throw new RuntimeException( "thrown in test()" );
 				}
-			});
+			})
+		);
+		assertEquals( "thrown in test()", e.getMessage());		
 	}
-
 }

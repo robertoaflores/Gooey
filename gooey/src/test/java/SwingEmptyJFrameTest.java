@@ -1,7 +1,8 @@
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -15,9 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.GooeyFrame;
@@ -46,77 +45,74 @@ public class SwingEmptyJFrameTest {
 			@Override
 			public void test(JFrame frame) {
 				String actual = frame.getTitle();
-				assertTrue( "", actual.isEmpty() );
+				assertTrue( actual.isEmpty() );
 			}
 		});
 	}
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();	
-	
 	@Test
 	public void testDoesntHaveMenuBar() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "Menubar not found" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				EmptyJFrame.main(new String[]{ "no menu" });
-			}
-			@Override
-			public void test(JFrame frame) {
-				Gooey.getMenuBar( frame );
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					EmptyJFrame.main(new String[]{ "no menu" });
+				}
+				@Override
+				public void test(JFrame frame) {
+					Gooey.getMenuBar( frame );
+				}
+			})
+		);
+		assertEquals( "Menubar not found", e.getMessage());		
 	}
 	@Test
 	public void testDoesntHaveButton() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "Component \"javax.swing.JButton\" not found" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				EmptyJFrame.main(new String[]{ "no button" });
-			}
-			@Override
-			public void test(JFrame frame) {
-				Gooey.getComponent( frame, JButton.class );
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					EmptyJFrame.main(new String[]{ "no button" });
+				}
+				@Override
+				public void test(JFrame frame) {
+					Gooey.getComponent( frame, JButton.class );
+				}
+			})
+		);
+		assertEquals( "Component \"javax.swing.JButton\" not found", e.getMessage());		
 	}
 	@Test
 	public void testDoesntHaveLabel() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "Component \"javax.swing.JLabel\" not found" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				EmptyJFrame.main(new String[]{ "no label" });
-			}
-			@Override
-			public void test(JFrame frame) {
-				Gooey.getComponent( frame, JLabel.class );
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					EmptyJFrame.main(new String[]{ "no label" });
+				}
+				@Override
+				public void test(JFrame frame) {
+					Gooey.getComponent( frame, JLabel.class );
+				}
+			})
+		);
+		assertEquals( "Component \"javax.swing.JLabel\" not found", e.getMessage());		
 	}
 	@Test
 	public void testDoesntHaveTextFields() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage( "Component \"javax.swing.JTextField\" not found" );
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				EmptyJFrame.main(new String[]{ "no text field" });
-			}
-			@Override
-			public void test(JFrame frame) {
-				Gooey.getComponent( frame, JTextField.class );
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					EmptyJFrame.main(new String[]{ "no text field" });
+				}
+				@Override
+				public void test(JFrame frame) {
+					Gooey.getComponent( frame, JTextField.class );
+				}
+			})
+		);
+		assertEquals( "Component \"javax.swing.JTextField\" not found", e.getMessage());		
 	}
 	@Test
 	public void testHasJPanelsOnly() {
@@ -149,9 +145,9 @@ public class SwingEmptyJFrameTest {
 			}
 			@Override
 			public void test(JFrame frame) {
-				assertTrue  ( "JFrame should be displayed", frame.isShowing() );
+				assertTrue  ( frame.isShowing(), "JFrame should be displayed" );
 				frame.dispatchEvent(new WindowEvent( frame, WindowEvent.WINDOW_CLOSING ));
-				assertFalse ( "JFrame should be hidden",    frame.isShowing() );
+				assertFalse ( frame.isShowing(), "JFrame should be hidden" );
 			}
 		});
 	}

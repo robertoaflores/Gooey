@@ -49,8 +49,18 @@ public class Gooey {
 	/**
 	 * Current build version.
 	 */
-	private static final String BUILD_VERSION = "1.8.0";
-
+	private static final String BUILD_VERSION = "1.0.11.05"; // gooey : jdk : junit
+	
+	/**
+	 * Returns Gooey's current version number. 
+	 * Intended to prevent that older versions are used in current projects.
+	 * @return current build version number.
+	 */
+	public static final String getVersion() {
+		return BUILD_VERSION;
+	}
+	
+	
 	/**
 	 * Enumerated type indicating whether a component is sought by name or displayed text.
 	 * When omitted in retrievals of labeled components (e.g., {@link #getLabel}, {@link #getButton}, 
@@ -74,24 +84,12 @@ public class Gooey {
 		}
 	}
 	
-	public static void main(String[] args) {
-		System.out.println( BUILD_VERSION );
-	}
-
 	/**
 	 * Private default (and only) constructor. No instance of Gooey can be created.
 	 */
 	private Gooey() {
 	}
 	
-	/**
-	 * Returns Gooey's current version number. 
-	 * Intended to prevent that older versions are used in current projects.
-	 * @return current build version number.
-	 */
-	public static final String getVersion() {
-		return BUILD_VERSION;
-	}
 	/**
 	 * Given a tab pane it returns the tab component with the given title.
 	 * @param tabPane pane holding the tab.
@@ -117,8 +115,8 @@ public class Gooey {
 		Optional<Component> result   = IntStream
     			.range   ( 0, tabPane.getTabCount() )
     			.filter  ( i->string.equals(flag == Match.BY_LABEL ? tabPane.getTitleAt(i) 
-    					                                          : tabPane.getComponentAt(i).getName() ))
-    			.mapToObj( i->tabPane.getComponentAt( i ))
+    					                                           : tabPane.getComponentAt(i).getName() ))
+    			.mapToObj( tabPane::getComponentAt )
     			.findAny ();
     	if (result.isPresent()) return                      result.get();
     	else                    throw new AssertionError( notFound.get() );
@@ -257,7 +255,7 @@ public class Gooey {
 	 */
 	public static List<JMenu> getMenus(JMenuBar menubar) {
 		return IntStream.range   ( 0, menubar.getMenuCount() )
-				        .mapToObj( i->menubar.getMenu(i) )
+		                .mapToObj( menubar::getMenu )
 				        .collect ( Collectors.toList() );
 	}
 	/**
@@ -363,7 +361,7 @@ public class Gooey {
 		Tree   tree = retrieveFrom.apply( container );
 		return tree.flattened()
                    .map      ( Tree::getComponent )
-                   .filter   ( c->type.isInstance(c) )
+                   .filter   ( type::isInstance )
                    .map      ( c->(T)c )
                    .filter   ( criteria );
 	}
@@ -380,7 +378,7 @@ public class Gooey {
 	 * @throws AssertionError if no window is displayed.
 	 * @see GooeyDisplayable
 	 */
-	public synchronized static <T extends GooeyDisplayable<U>, U extends Window> void capture(T displayable) {
+	public static synchronized <T extends GooeyDisplayable<U>, U extends Window> void capture(T displayable) {
 		displayable.capture();
 	}
 	// fields used when building trees in getComponents()
@@ -390,7 +388,7 @@ public class Gooey {
 			Tree result = new Tree( component );
 			if (component instanceof Container) {
 				Container  container = (Container) component;
-				Stream.of( container.getComponents() ).map( c->apply(c) ).forEach( t->result.add(t) );
+				Stream.of( container.getComponents() ).map( c->apply(c) ).forEach( result::add );
 			}
 			return result;
 		}
@@ -408,7 +406,7 @@ public class Gooey {
 					Container container = (Container)component;
 					children            = container.getComponents();
 				}
-				Stream.of( children ).map( c->apply(c) ).forEach( t->result.add(t) );
+				Stream.of( children ).map( c->apply(c) ).forEach( result::add );
 			}
 			return result;
 		}

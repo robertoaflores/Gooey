@@ -11,8 +11,9 @@
  * <p>Company: JoSE Group, Christopher Newport University</p>
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -27,9 +28,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 
 import edu.cnu.cs.gooey.Gooey;
 import edu.cnu.cs.gooey.Gooey.Match;
@@ -92,9 +90,6 @@ public class SwingTabbedPaneTest {
 		}
 	}
 	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();	
-
 //	@Test
 	public void testHasTabs() {
 		Gooey.capture( new GooeyFrame() {
@@ -105,7 +100,7 @@ public class SwingTabbedPaneTest {
 			@Override
 			public void test(JFrame frame) {
 				JTabbedPane tabPane = Gooey.getComponent( frame, JTabbedPane.class );
-				assertEquals ( "Incorrect result", 4, tabPane.getTabCount() );
+				assertEquals ( 4, tabPane.getTabCount() );
 				
 				Component tab1ByText = Gooey.getTab( tabPane, "Tab 1" );
 				Component tab2ByText = Gooey.getTab( tabPane, "Tab 2" );
@@ -117,18 +112,18 @@ public class SwingTabbedPaneTest {
 				Component tab3ByName = Gooey.getTab( tabPane, TAB_3, Match.BY_NAME );
 				Component tab4ByName = Gooey.getTab( tabPane, TAB_4, Match.BY_NAME );
 
-				assertTrue( "", tab1ByText == tab1ByName );
-				assertTrue( "", tab2ByText == tab2ByName );
-				assertTrue( "", tab3ByText == tab3ByName );
-				assertTrue( "", tab4ByText == tab4ByName );
+				assertTrue( tab1ByText == tab1ByName );
+				assertTrue( tab2ByText == tab2ByName );
+				assertTrue( tab3ByText == tab3ByName );
+				assertTrue( tab4ByText == tab4ByName );
 				
 				List<JPanel> panels = Gooey.getComponents( tabPane, JPanel.class );
-				assertEquals( "Incorrect result", 4, panels.size());
+				assertEquals( 4, panels.size());
 
-				assertEquals  ( "Incorrect result", "Does nothing",               tabPane.getToolTipTextAt(0) );
-				assertEquals  ( "Incorrect result", "Does twice as much nothing", tabPane.getToolTipTextAt(1) );
-				assertEquals  ( "Incorrect result", "Still does nothing",         tabPane.getToolTipTextAt(2) );
-				assertEquals  ( "Incorrect result", "Does nothing at all",        tabPane.getToolTipTextAt(3) );
+				assertEquals  ( "Does nothing",               tabPane.getToolTipTextAt(0) );
+				assertEquals  ( "Does twice as much nothing", tabPane.getToolTipTextAt(1) );
+				assertEquals  ( "Still does nothing",         tabPane.getToolTipTextAt(2) );
+				assertEquals  ( "Does nothing at all",        tabPane.getToolTipTextAt(3) );
 
 				Gooey.getLabel( panels.get(0), "Panel #1" );
 				Gooey.getLabel( panels.get(1), "Panel #2" );
@@ -139,43 +134,43 @@ public class SwingTabbedPaneTest {
 	}
 //	@Test
 	public void testDoesntHaveTabByText() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage("Tab \"Tab 9\" not found (searched by label)");
-		
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-				PanelWithTabs.main( new String[]{} );
-			}
-			@Override
-			public void test(JFrame frame) {
-				JTabbedPane   tabPane = Gooey.getComponent( frame, JTabbedPane.class );				
-				Gooey.getTab( tabPane, "Tab 9" );
-			}
-		});
+		Throwable e = assertThrows( AssertionError.class, () ->
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+					PanelWithTabs.main( new String[]{} );
+				}
+				@Override
+				public void test(JFrame frame) {
+					JTabbedPane   tabPane = Gooey.getComponent( frame, JTabbedPane.class );				
+					Gooey.getTab( tabPane, "Tab 9" );
+				}
+			})
+		);
+		assertEquals( "Tab \"Tab 9\" not found (searched by label)", e.getMessage() );
 	}
 //	@Test
 	public void testDoesntHaveTabByName() {
-		thrown.expect( AssertionError.class );
-		thrown.expectMessage("Tab \"my.tab\" not found (searched by name)");
-
-//		Debug.Me("++++++++++");
-		Gooey.capture( new GooeyFrame() {
-			@Override
-			public void invoke() {
-//				Debug.Me("invoke++++");
-				PanelWithTabs.main( new String[]{} );
-//				Debug.Me("invoke----");
-			}
-			@Override
-			public void test(JFrame frame) {
-//				Debug.Me("test++++++");
-				JTabbedPane   tabPane = Gooey.getComponent( frame, JTabbedPane.class );				
-				Gooey.getTab( tabPane, "my.tab", Match.BY_NAME );
-//				Debug.Me("test------");
-			}
-		});
-//		Debug.Me("----------");
+		Throwable e = assertThrows( AssertionError.class, () ->
+	//		Debug.Me("++++++++++");
+			Gooey.capture( new GooeyFrame() {
+				@Override
+				public void invoke() {
+	//				Debug.Me("invoke++++");
+					PanelWithTabs.main( new String[]{} );
+	//				Debug.Me("invoke----");
+				}
+				@Override
+				public void test(JFrame frame) {
+	//				Debug.Me("test++++++");
+					JTabbedPane   tabPane = Gooey.getComponent( frame, JTabbedPane.class );				
+					Gooey.getTab( tabPane, "my.tab", Match.BY_NAME );
+	//				Debug.Me("test------");
+				}
+			})
+	//		Debug.Me("----------");
+		);
+		assertEquals( "Tab \"my.tab\" not found (searched by name)", e.getMessage() );
 	}
 //	@Test
 	public void testHasPanels() {
@@ -188,7 +183,7 @@ public class SwingTabbedPaneTest {
 			public void test(JFrame frame) {
 				JTabbedPane  tabPane = Gooey.getComponent ( frame, JTabbedPane.class );				
 				List<JPanel> panels  = Gooey.getComponents( tabPane, JPanel.class );
-				assertEquals( "Incorrect result", 4, panels.size());
+				assertEquals( 4, panels.size());
 
 				Gooey.getLabel( panels.get(0), "Panel #1" );
 				Gooey.getLabel( panels.get(1), "Panel #2" );
@@ -209,10 +204,10 @@ public class SwingTabbedPaneTest {
 			public void test(JFrame frame) {
 				JTabbedPane tabPane = Gooey.getComponent( frame, JTabbedPane.class );
 				
-				assertEquals  ( "Incorrect result", "Does nothing",               tabPane.getToolTipTextAt(0) );
-				assertEquals  ( "Incorrect result", "Does twice as much nothing", tabPane.getToolTipTextAt(1) );
-				assertEquals  ( "Incorrect result", "Still does nothing",         tabPane.getToolTipTextAt(2) );
-				assertEquals  ( "Incorrect result", "Does nothing at all",        tabPane.getToolTipTextAt(3) );
+				assertEquals  ( "Does nothing",               tabPane.getToolTipTextAt(0) );
+				assertEquals  ( "Does twice as much nothing", tabPane.getToolTipTextAt(1) );
+				assertEquals  ( "Still does nothing",         tabPane.getToolTipTextAt(2) );
+				assertEquals  ( "Does nothing at all",        tabPane.getToolTipTextAt(3) );
 			}
 		});
 	}

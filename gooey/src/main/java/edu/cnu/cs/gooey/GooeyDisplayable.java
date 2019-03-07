@@ -35,17 +35,22 @@ public abstract class GooeyDisplayable<T> {
 		this.noWindowMessage = noWindowMessage;
 	}
 
-	private static final long    TIMEOUT_DEFAULT_FIRST = 3000L;
-	private static final long    TIMEOUT_DEFAULT       = 1000L;
-	private static       boolean TIMEOUT_FIRST         = true;
+	private static final long TIMEOUT = 3000L;
 	protected long getTimeout() {
-		if (TIMEOUT_FIRST) {
-			TIMEOUT_FIRST = false;
-			return TIMEOUT_DEFAULT_FIRST;
-		} else {
-			return TIMEOUT_DEFAULT;
-		}
+		return TIMEOUT;
 	}
+
+//	private static final long    TIMEOUT_DEFAULT_FIRST = 3000L;
+//	private static final long    TIMEOUT_DEFAULT       = 1000L;
+//	private static       boolean TIMEOUT_FIRST         = true;
+//	protected long getTimeout() {
+//		if (TIMEOUT_FIRST) {
+//			TIMEOUT_FIRST = false;
+//			return TIMEOUT_DEFAULT_FIRST;
+//		} else {
+//			return TIMEOUT_DEFAULT;
+//		}
+//	}
 	
 	/**
 	 * This method calls the code displaying a window, waits for the window to display (within a timeout period) and calls 
