@@ -3,11 +3,15 @@ Gooey
 <p><strong>Lean jUnit testing library for Java Swing applications.</strong></p>
 <i>/'GOO-e/ -- adjective. 1. Soft and sticky. 2. Mawkishly sentimental.</i><br/>
 <hr>
-<h4>Downloading Gooey's JAR</h4>
+<h4>Using Gooey</h4>
 <ol>
-<li>Download the <a href="https://github.com/robertoaflores/Gooey/blob/master/gooey/build/libs/">latest JAR</a> build (select "View Raw" in next screen to download).
-<li>Add downloaded JAR to your Eclipse project as an "External Archive" in the "Build Path". 
-<li>Done!
+<li>Gooey can be added to your projects as a dependency from <a href="http://central.maven.org/maven2/">Maven Central<a>. 
+<li>For example, a Gradle dependency could be:
+  <pre>
+  dependencies {
+    compile 'edu.cnu.cs:gooey:1.0.11.05'
+  }
+  </pre>
 </ol>
 <hr>
 <strong>Notes for developers:</strong>
