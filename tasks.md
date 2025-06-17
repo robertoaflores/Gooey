@@ -1,0 +1,5 @@
+- Set explicit versions for dependencies in `gooey/lib/build.gradle.kts` instead of using the `+` version syntax.
+- Add instructions in `README.md` on how to run tests using Gradle Wrapper.
+- Configure a GitHub Actions workflow to run `./gradlew test` on pull requests.
+- Improve error handling in `GooeyDisplayable.capture()` so that all exceptions are propagated correctly.
+- Add Javadoc comments for recently added classes and methods.
