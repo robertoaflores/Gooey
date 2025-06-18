@@ -89,15 +89,19 @@ public abstract class GooeyDisplayable<T> {
 				Thread.sleep( 200 ); // hack: waiting to give Swing threads a chance to update.
 				close( captured );
 			}
-		} catch (ExecutionException e) {
-			Throwable t = e.getCause();
-			if (t instanceof RuntimeException runtime) {
-				throw runtime;
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			Thread.currentThread().interrupt();
-		} finally {
+                } catch (ExecutionException e) {
+                        Throwable t = e.getCause();
+                        if (t instanceof RuntimeException runtime) {
+                                throw runtime;
+                        } else if (t instanceof AssertionError assertion) {
+                                throw assertion;
+                        } else {
+                                throw new RuntimeException(t);
+                        }
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                } finally {
 			setEnableCapture( false );
 		}
 	}
