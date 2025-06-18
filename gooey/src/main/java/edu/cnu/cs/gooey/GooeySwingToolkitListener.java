@@ -34,20 +34,29 @@ public class GooeySwingToolkitListener<T> implements GooeyToolkitListener<T>, AW
 		this.criteria = criteria;
 	}
 	@Override
-	public void setEnableCapture(boolean on) {
-		if (on) TOOLKIT.   addAWTEventListener( this, AWTEvent.WINDOW_EVENT_MASK );
-		else    TOOLKIT.removeAWTEventListener( this );
-	}
-	public T getTarget() {
-//		Debug.Me("wait++++++");
-		synchronized(this) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-			}
-		}
-//		Debug.Me("wait------");
-		return target;
+        public void setEnableCapture(boolean on) {
+                if (on) {
+                        synchronized(this) {
+                                target = null;
+                        }
+                        TOOLKIT.addAWTEventListener( this, AWTEvent.WINDOW_EVENT_MASK );
+                } else {
+                        TOOLKIT.removeAWTEventListener( this );
+                }
+        }
+        public T getTarget() {
+//              Debug.Me("wait++++++");
+                synchronized(this) {
+                        while (target == null) {
+                                try {
+                                        wait();
+                                } catch (InterruptedException e) {
+                                }
+                        }
+                }
+//              Debug.Me("wait------");
+                return target;
+
 	}
 //	private String get(AWTEvent event) {
 //		int    id = event.getID();
