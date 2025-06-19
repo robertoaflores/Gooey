@@ -179,7 +179,7 @@ $RECYCLE.BIN/
 *.lnk
 
 ### Gradle ###
-!gooey/.gradle/
+.gradle
 **/build/
 !src/**/build/
 
