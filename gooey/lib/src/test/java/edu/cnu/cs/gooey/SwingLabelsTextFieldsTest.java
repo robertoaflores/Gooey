@@ -3,19 +3,7 @@ package edu.cnu.cs.gooey;
 
 
 
-/**
- * <p>Copyright: Copyright (c) 2013, JoSE Group, Christopher Newport University. 
- * Permission to use, copy, modify, distribute and sell this software and its
- * documentation for any purpose is hereby granted without fee, provided that
- * the above copyright notice appear in all copies and that both that copyright
- * notice and this permission notice appear in supporting documentation.  
- * The JoSE Group makes no representations about the suitability
- * of  this software for any purpose. It is provided "as is" without express
- * or implied warranty.</p>
- * <p>Company: JoSE Group, Christopher Newport University</p>
- */
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import java.awt.FlowLayout;
 
@@ -75,7 +63,7 @@ public class SwingLabelsTextFieldsTest {
 		}
 	}
 	@Test
-	public void testHasLabels() {
+	void testHasLabels() {
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override
@@ -92,14 +80,14 @@ public class SwingLabelsTextFieldsTest {
 					JLabel mLabelByName = Gooey.getLabel( frame, MIDDLE_LABEL, Gooey.Match.BY_NAME );
 					JLabel lLabelByName = Gooey.getLabel( frame,   LAST_LABEL, Gooey.Match.BY_NAME );
 					
-					assertTrue( fLabelByText == fLabelByName );
-					assertTrue( mLabelByText == mLabelByName );
-					assertTrue( lLabelByText == lLabelByName );
+					assertSame( fLabelByText, fLabelByName );
+					assertSame( mLabelByText, mLabelByName );
+					assertSame( lLabelByText, lLabelByName );
 				}
 			});
 	}
 	@Test
-	public void testHasTextFields() {
+	void testHasTextFields() {
 		Gooey.capture(
 			new GooeyFrame() {
 				@Override

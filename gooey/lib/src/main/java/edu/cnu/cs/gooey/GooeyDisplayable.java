@@ -11,6 +11,7 @@ package edu.cnu.cs.gooey;
  * <p>Company: JoSE Group, Christopher Newport University</p>
  */
 
+import java.util.Objects;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -29,9 +30,7 @@ public abstract class GooeyDisplayable<T> {
 	private final String noWindowMessage;
 
 	protected GooeyDisplayable(String noWindowMessage) {
-		if (noWindowMessage == null) {
-			throw new IllegalArgumentException( "parameter cannot be null" );
-		}
+		Objects.requireNonNull( noWindowMessage, "parameter cannot be null" );
 		this.noWindowMessage = noWindowMessage;
 	}
 
