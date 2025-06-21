@@ -90,16 +90,15 @@ public abstract class GooeyDisplayable<T> {
 			}
                 } catch (ExecutionException e) {
                         Throwable t = e.getCause();
-                        if (t instanceof RuntimeException runtime) {
-                                throw runtime;
-                        } else if (t instanceof Error error) {
-                                throw error;
-                        } else {
-                                throw new RuntimeException(t);
-                        }
+                        switch (t) {
+								case AssertionError   assertion -> throw assertion;
+								case RuntimeException runtime   -> throw runtime;
+								case Error            error     -> throw error;
+								default                         -> throw new RuntimeException( t );
+						}
                 } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
+                        throw new RuntimeException( e );
                } finally {
                        executor.shutdownNow();
                        setEnableCapture( false );

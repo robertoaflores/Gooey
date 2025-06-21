@@ -378,7 +378,7 @@ public class Gooey {
 	 * @throws AssertionError if no window is displayed.
 	 * @see GooeyDisplayable
 	 */
-	public static synchronized <T extends GooeyDisplayable<U>, U extends Window> void capture(T displayable) {
+	public static synchronized <T extends GooeyDisplayable<U>, U extends Window> void capture(T displayable) throws AssertionError {
 		displayable.capture();
 	}
 	// fields used when building trees in getComponents()

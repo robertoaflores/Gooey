@@ -137,14 +137,9 @@ class BMITest {
 					JComponent actual   = components.get( i );
 					Class<?>   expected = null;
 					switch (i) {
-					case 0 : 
-					case 2 : 
-					case 5 : 
-					case 6 : expected = JLabel    .class; break;
-					case 1 :
-					case 3 : expected = JTextField.class; break;
-					case 4 : expected = JButton   .class; break;
-					default: fail( String.format("There are more components found (%d) than expected (%d)", components.size(), 3 ));
+					case 0,2,5,6 : expected = JLabel    .class; break;
+					case 1,3,4   : expected = JButton   .class; break;
+					default      : fail( "There are more components found (%d) than expected (%d)".formatted( components.size(), 3 ));
 					}
 					assertEquals( expected, actual.getClass(), "Incorrect component @ index "+i ); 
 				}
