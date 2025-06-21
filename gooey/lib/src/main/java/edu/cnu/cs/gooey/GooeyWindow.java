@@ -20,7 +20,15 @@ import java.util.function.Predicate;
 
 import javax.swing.SwingUtilities;
 
-public abstract class GooeyWindow <T extends Window> extends GooeyDisplayable<T> {
+/**
+ * Base class for {@link java.awt.Window} based displayables used in Gooey
+ * tests.  Subclasses define the specific window type that will be captured
+ * and provide the {@link GooeyDisplayable} hooks for invoking and testing the
+ * window.
+ *
+ * @param <T> concrete type of {@link Window} this instance captures
+ */
+public abstract class GooeyWindow<T extends Window> extends GooeyDisplayable<T> {
 	private final GooeySwingToolkitListener<T> listener;
 
 	protected GooeyWindow(final Class<T> type, String noWindowMessage) {
