@@ -19,11 +19,11 @@ repositories {
 }
 
 dependencies {
-    implementation ( "org.junit.jupiter:junit-jupiter:5.12.+" )     // 5.12.x https://junit.org/junit5/
+    implementation ( "org.junit.jupiter:junit-jupiter:5.12.0" )     // 5.12.x https://junit.org/junit5/
     testRuntimeOnly( "org.junit.platform:junit-platform-launcher" ) // 5.12.0 test discovery https://github.com/gradle/gradle/issues/32534
 
-    implementation( "org.awaitility:awaitility:+" )
-    implementation( "com.google.truth:truth:+" )                    // 1.4.4  https://truth.dev/
+    implementation( "org.awaitility:awaitility:4.2.0" )
+    implementation( "com.google.truth:truth:1.4.4" )                    // 1.4.4  https://truth.dev/
 }
 
 java {

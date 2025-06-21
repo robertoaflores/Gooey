@@ -20,3 +20,10 @@ Gooey
 <li>API is not stable. Expect changes while development is underway.<br/>
 </ul>
 <hr>
+<h4>Running tests</h4>
+Ensure JDK 21 is installed and available on your PATH.<br/>
+From the project root, run the following command to execute all tests:
+<pre>
+./gradlew test
+</pre>
+
