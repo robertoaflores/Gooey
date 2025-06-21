@@ -101,8 +101,9 @@ public abstract class GooeyDisplayable<T> {
                 } catch (InterruptedException e) {
                         e.printStackTrace();
                         Thread.currentThread().interrupt();
-                } finally {
-			setEnableCapture( false );
-		}
-	}
+               } finally {
+                       executor.shutdownNow();
+                       setEnableCapture( false );
+               }
+       }
 }
